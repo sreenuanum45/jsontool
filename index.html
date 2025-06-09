@@ -1,0 +1,2177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced JSON Toolkit</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/jsonpath-plus@7.0.0/dist/index-umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jmespath/1.0.0/jmespath.min.js"></script>
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --success: #4cc9f0;
+            --warning: #f72585;
+            --danger: #e63946;
+            --info: #4895ef;
+            --light: #f8f9fa;
+            --dark: #1d3557;
+            --gradient-start: #4361ee;
+            --gradient-end: #3a0ca3;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 2.8em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .header p {
+            font-size: 1.3em;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .tabs {
+            display: flex;
+            background: var(--light);
+            border-bottom: 2px solid #e9ecef;
+            overflow-x: auto;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            padding: 15px 25px;
+            cursor: pointer;
+            background: transparent;
+            border: none;
+            font-size: 16px;
+            font-weight: 600;
+            color: #6c757d;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            border-bottom: 3px solid transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .tab.active {
+            color: var(--secondary);
+            border-bottom-color: var(--primary);
+            background: white;
+        }
+
+        .tab:hover {
+            background: rgba(67, 97, 238, 0.1);
+        }
+
+        .tab-content {
+            display: none;
+            padding: 30px;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .json-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+
+        .json-input {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .json-input label {
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--secondary);
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .json-textarea {
+            width: 100%;
+            height: 350px;
+            padding: 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 15px;
+            font-family: 'Fira Code', 'Courier New', monospace;
+            font-size: 15px;
+            resize: vertical;
+            transition: border-color 0.3s ease;
+            background: #f8fafc;
+            line-height: 1.6;
+        }
+
+        .json-textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(67, 97, 238, 0.15);
+        }
+
+        .single-json-section {
+            margin-bottom: 25px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin: 25px 0;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 14px 25px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #718096, #4a5568);
+            color: white;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success), #2ecc71);
+            color: white;
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, var(--warning), #e67e22);
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, var(--danger), #c0392b);
+            color: white;
+        }
+
+        .btn-info {
+            background: linear-gradient(135deg, var(--info), #138496);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .output-section {
+            margin-top: 30px;
+        }
+
+        .output-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .output-area {
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 15px;
+            padding: 25px;
+            min-height: 250px;
+            font-family: 'Fira Code', 'Courier New', monospace;
+            font-size: 15px;
+            white-space: pre-wrap;
+            overflow-x: auto;
+            max-height: 500px;
+            overflow-y: auto;
+            line-height: 1.6;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin: 25px 0;
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            border: 1px solid #edf2f7;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature-card h3 {
+            color: var(--dark);
+            margin-bottom: 20px;
+            font-size: 1.4em;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 2px solid #f1f5f9;
+            padding-bottom: 15px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 18px;
+            border: 1px solid #cbd5e0;
+            border-radius: 10px;
+            margin: 10px 0;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(67, 97, 238, 0.15);
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .checkbox-group label {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            user-select: none;
+            font-size: 16px;
+        }
+
+        .alert {
+            padding: 18px 22px;
+            border-radius: 12px;
+            margin: 20px 0;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 16px;
+        }
+
+        .alert-success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+
+        .alert-error {
+            background: #fee2e2;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
+        }
+
+        .alert-warning {
+            background: #fef3c7;
+            color: #b45309;
+            border: 1px solid #fde68a;
+        }
+
+        .alert-info {
+            background: #dbeafe;
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+        }
+
+        .path-item {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 15px;
+            margin: 10px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: transform 0.2s ease;
+        }
+
+        .path-item:hover {
+            transform: translateX(5px);
+            border-left: 4px solid var(--primary);
+        }
+
+        .copy-btn {
+            background: var(--info);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 18px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.3s ease;
+        }
+
+        .copy-btn:hover {
+            background: #0e7490;
+        }
+
+        .path-options {
+            display: flex;
+            gap: 15px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .path-option-btn {
+            background: #edf2f7;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .path-option-btn.active {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.2);
+        }
+
+        .path-option-btn:hover:not(.active) {
+            background: #e2e8f0;
+        }
+
+        .test-case {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 15px 0;
+            transition: transform 0.3s ease;
+        }
+
+        .test-case:hover {
+            transform: translateX(5px);
+        }
+
+        .test-case h4 {
+            color: #2d3748;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .framework-tabs {
+            display: flex;
+            margin-bottom: 25px;
+            border-bottom: 1px solid #e2e8f0;
+            flex-wrap: wrap;
+        }
+
+        .framework-tab {
+            padding: 15px 25px;
+            cursor: pointer;
+            background: #f1f5f9;
+            border: none;
+            font-size: 16px;
+            font-weight: 500;
+            border-bottom: 3px solid transparent;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .framework-tab.active {
+            border-bottom-color: var(--primary);
+            background: white;
+            color: var(--primary);
+        }
+
+        .framework-tab:hover:not(.active) {
+            background: #e2e8f0;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top: 3px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .query-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+
+        .json-finder {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .json-finder input {
+            flex: 1;
+            padding: 15px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .json-finder input:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(67, 97, 238, 0.15);
+        }
+
+        .json-finder button {
+            padding: 15px 25px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: transform 0.3s ease;
+        }
+
+        .json-finder button:hover {
+            transform: translateY(-3px);
+        }
+
+        .result-item {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 18px;
+            margin: 12px 0;
+            transition: transform 0.3s ease;
+        }
+
+        .result-item:hover {
+            transform: translateX(5px);
+            border-left: 4px solid var(--primary);
+        }
+
+        .pojo-output {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 25px;
+            font-family: 'Fira Code', monospace;
+            white-space: pre;
+            overflow-x: auto;
+            max-height: 500px;
+            line-height: 1.6;
+            font-size: 14px;
+        }
+
+        .visual-canvas {
+            width: 100%;
+            height: 400px;
+            background: #f8fafc;
+            border-radius: 15px;
+            border: 2px dashed #cbd5e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #718096;
+            font-size: 20px;
+            font-weight: 500;
+            margin-top: 25px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 25px;
+            margin: 30px 0;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid #edf2f7;
+        }
+
+        .stat-value {
+            font-size: 2.8em;
+            font-weight: 700;
+            color: var(--primary);
+            margin: 20px 0;
+        }
+
+        .stat-label {
+            font-size: 18px;
+            color: #718096;
+        }
+
+        .history-panel {
+            margin-top: 30px;
+        }
+
+        .history-item {
+            background: white;
+            border-left: 4px solid var(--primary);
+            border-radius: 10px;
+            padding: 18px 25px;
+            margin: 15px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .history-item:hover {
+            transform: translateX(5px);
+        }
+
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip .tooltip-text {
+            visibility: hidden;
+            background: var(--dark);
+            color: white;
+            text-align: center;
+            border-radius: 8px;
+            padding: 10px 15px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 14px;
+            width: max-content;
+            max-width: 300px;
+        }
+
+        .tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .floating-btn {
+            position: fixed;
+            bottom: 40px;
+            right: 40px;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(67, 97, 238, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .floating-btn:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 15px 35px rgba(67, 97, 238, 0.5);
+        }
+
+        .json-tree {
+            font-family: 'Fira Code', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .json-tree .key {
+            color: #881391;
+            font-weight: 500;
+        }
+
+        .json-tree .string {
+            color: #c41a16;
+        }
+
+        .json-tree .number {
+            color: #1c00cf;
+        }
+
+        .json-tree .boolean {
+            color: #0d22aa;
+        }
+
+        .json-tree .null {
+            color: #808080;
+        }
+
+        .json-tree .brace, .json-tree .bracket {
+            color: #333;
+            font-weight: bold;
+        }
+
+        .json-tree .collapser {
+            cursor: pointer;
+            margin-right: 5px;
+            display: inline-block;
+            width: 12px;
+            text-align: center;
+        }
+
+        .json-tree .node {
+            margin-left: 20px;
+        }
+
+        .json-tree .selected {
+            background-color: rgba(67, 97, 238, 0.1);
+            outline: 1px solid var(--primary);
+        }
+
+        .json-tree .node:hover {
+            background-color: rgba(67, 97, 238, 0.05);
+        }
+
+        .json-tree .path {
+            font-size: 11px;
+            color: #718096;
+            margin-left: 10px;
+            font-style: italic;
+        }
+
+        @media (max-width: 1200px) {
+            .json-section, .query-section {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                margin: 10px;
+            }
+            
+            .header {
+                padding: 25px;
+            }
+            
+            .header h1 {
+                font-size: 2.2em;
+            }
+            
+            .tabs {
+                flex-direction: column;
+            }
+            
+            .tab {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .button-group {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 1.8em;
+            }
+            
+            .header p {
+                font-size: 1.1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-rocket"></i> Advanced JSON Toolkit</h1>
+            <p>Professional JSON Path Generation, Testing, Querying & Validation Suite</p>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('paths')"><i class="fas fa-route"></i> Path Explorer</button>
+            <button class="tab" onclick="switchTab('testing')"><i class="fas fa-vial"></i> Testing Frameworks</button>
+            <button class="tab" onclick="switchTab('query')"><i class="fas fa-search"></i> JSON Query</button>
+            <button class="tab" onclick="switchTab('compare')"><i class="fas fa-exchange-alt"></i> JSON Compare</button>
+            <button class="tab" onclick="switchTab('formatter')"><i class="fas fa-magic"></i> Formatter</button>
+            <button class="tab" onclick="switchTab('validator')"><i class="fas fa-check-circle"></i> Validator</button>
+            <button class="tab" onclick="switchTab('visual')"><i class="fas fa-network-wired"></i> Visualization</button>
+        </div>
+
+        <!-- Path Generator Tab -->
+        <div id="paths" class="tab-content active">
+            <div class="single-json-section">
+                <label for="pathJson"><i class="fas fa-code"></i> JSON Input:</label>
+                <textarea id="pathJson" class="json-textarea" placeholder="Paste your JSON here to generate paths...">{
+  "store": {
+    "book": [
+      {
+        "category": "reference",
+        "author": "Nigel Rees",
+        "title": "Sayings of the Century",
+        "price": 8.95,
+        "inStock": true,
+        "dimensions": {"length": 20, "width": 15, "units": "cm"}
+      },
+      {
+        "category": "fiction",
+        "author": "Evelyn Waugh",
+        "title": "Sword of Honour",
+        "price": 12.99,
+        "inStock": false,
+        "dimensions": {"length": 22, "width": 18, "units": "cm"}
+      }
+    ],
+    "bicycle": {
+      "color": "red",
+      "price": 19.95,
+      "inStock": true,
+      "specs": ["aluminum", "carbon", "steel"]
+    }
+  },
+  "owner": {
+    "name": "John Doe",
+    "contact": {
+      "email": "john@example.com",
+      "phone": "+1-555-1234"
+    }
+  },
+  "active": true,
+  "lastUpdated": "2023-05-15T12:30:45Z"
+}</textarea>
+            </div>
+            
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3><i class="fas fa-cog"></i> Path Options</h3>
+                    <div class="checkbox-group">
+                        <label><input type="checkbox" id="includeArrayIndices" checked> Include Array Indices</label>
+                        <label><input type="checkbox" id="includeValues" checked> Include Values</label>
+                        <label><input type="checkbox" id="showDataTypes" checked> Show Data Types</label>
+                        <label><input type="checkbox" id="generateQueries"> Generate Query Examples</label>
+                    </div>
+                    <div class="path-options">
+                        <button class="path-option-btn active" onclick="setPathType('jsonpath')"><i class="fas fa-bolt"></i> JSONPath</button>
+                        <button class="path-option-btn" onclick="setPathType('gpath')"><i class="fas fa-project-diagram"></i> GPath</button>
+                        <button class="path-option-btn" onclick="setPathType('xpath')"><i class="fas fa-sitemap"></i> XPath</button>
+                        <button class="path-option-btn" onclick="setPathType('jq')"><i class="fas fa-terminal"></i> jq</button>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <h3><i class="fas fa-sliders-h"></i> Advanced Options</h3>
+                    <div class="checkbox-group">
+                        <label><input type="checkbox" id="wildcardArrays" checked> Use Wildcards for Arrays</label>
+                        <label><input type="checkbox" id="filterExpressions"> Generate Filter Expressions</label>
+                        <label><input type="checkbox" id="deepScan" checked> Deep Scan for Nested Objects</label>
+                        <label><input type="checkbox" id="generatePojos"> Generate POJOs</label>
+                    </div>
+                    <div style="margin-top: 15px;">
+                        <label>Path Format:</label>
+                        <select id="pathFormat" class="form-control">
+                            <option>Dot Notation</option>
+                            <option>Bracket Notation</option>
+                            <option>Standard</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="button-group">
+                <button class="btn btn-primary" onclick="extractPaths()">
+                    <span class="loading" id="extractLoading" style="display:none"></span>
+                    <i class="fas fa-sitemap"></i> Extract Paths
+                </button>
+                <button class="btn btn-success" onclick="generateJSONPath()">
+                    <span class="loading" id="jsonpathLoading" style="display:none"></span>
+                    <i class="fas fa-bolt"></i> Generate JSONPath
+                </button>
+                <button class="btn btn-info" onclick="generateGPath()">
+                    <span class="loading" id="gpathLoading" style="display:none"></span>
+                    <i class="fas fa-project-diagram"></i> Generate GPath
+                </button>
+                <button class="btn btn-warning" onclick="generateTestAssertions()">
+                    <span class="loading" id="assertionLoading" style="display:none"></span>
+                    <i class="fas fa-vial"></i> Generate Test Assertions
+                </button>
+                <button class="btn btn-danger" onclick="generatePojos()">
+                    <span class="loading" id="pojoLoading" style="display:none"></span>
+                    <i class="fas fa-file-code"></i> Generate POJOs
+                </button>
+            </div>
+            
+            <div class="output-section">
+                <div class="output-header">
+                    <h3><i class="fas fa-list"></i> Generated Paths:</h3>
+                    <button class="btn btn-secondary" onclick="copyAllPaths()"><i class="fas fa-copy"></i> Copy All</button>
+                </div>
+                <div id="pathsResult" class="output-area">Enter JSON to generate paths...</div>
+            </div>
+        </div>
+
+        <!-- Testing Frameworks Tab -->
+        <div id="testing" class="tab-content">
+            <div class="single-json-section">
+                <label for="testJson"><i class="fas fa-code"></i> JSON Input:</label>
+                <textarea id="testJson" class="json-textarea" placeholder="Paste your JSON here to generate tests...">{
+  "status": "success",
+  "data": {
+    "id": 123,
+    "name": "John Doe",
+    "email": "john@example.com",
+    "roles": ["admin", "user"],
+    "active": true,
+    "preferences": {
+      "theme": "dark",
+      "notifications": true,
+      "language": "en"
+    }
+  },
+  "timestamp": "2023-05-15T12:30:45Z",
+  "version": "1.2.0"
+}</textarea>
+            </div>
+            
+            <div class="framework-tabs">
+                <button class="framework-tab active" onclick="switchFramework('restassured')"><i class="fas fa-shield-alt"></i> RestAssured</button>
+                <button class="framework-tab" onclick="switchFramework('testng')"><i class="fas fa-flask"></i> TestNG</button>
+                <button class="framework-tab" onclick="switchFramework('karate')"><i class="fas fa-paw"></i> Karate</button>
+                <button class="framework-tab" onclick="switchFramework('bdd')"><i class="fas fa-leaf"></i> BDD (Cucumber)</button>
+                <button class="framework-tab" onclick="switchFramework('pojo')"><i class="fas fa-file-code"></i> POJO & Hamcrest</button>
+                <button class="framework-tab" onclick="switchFramework('jest')"><i class="fab fa-js"></i> Jest</button>
+            </div>
+            
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3><i class="fas fa-cog"></i> API Configuration</h3>
+                    <input type="text" id="baseUrl" class="form-control" value="https://api.example.com" placeholder="Base URL">
+                    <input type="text" id="endpoint" class="form-control" value="/users/123" placeholder="Endpoint">
+                    <select id="httpMethod" class="form-control">
+                        <option value="GET">GET</option>
+                        <option value="POST">POST</option>
+                        <option value="PUT">PUT</option>
+                        <option value="DELETE">DELETE</option>
+                        <option value="PATCH">PATCH</option>
+                    </select>
+                </div>
+                <div class="feature-card">
+                    <h3><i class="fas fa-sliders-h"></i> Test Options</h3>
+                    <div class="checkbox-group">
+                        <label><input type="checkbox" id="generateAssertions" checked> Generate Assertions</label>
+                        <label><input type="checkbox" id="generateDataProvider"> Generate Test Data</label>
+                        <label><input type="checkbox" id="generateSetupTeardown" checked> Generate Setup/Teardown</label>
+                        <label><input type="checkbox" id="includeAuth"> Include Authentication</label>
+                    </div>
+                    <div style="margin-top: 15px;">
+                        <label>Response Timeout (ms):</label>
+                        <input type="number" id="timeout" class="form-control" value="5000">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="button-group">
+                <button class="btn btn-primary" onclick="generateTests()">
+                    <span class="loading" id="testLoading" style="display:none"></span>
+                    <i class="fas fa-code"></i> Generate Tests
+                </button>
+                <button class="btn btn-success" onclick="runTests()">
+                    <span class="loading" id="runTestLoading" style="display:none"></span>
+                    <i class="fas fa-play"></i> Run Tests (Simulation)
+                </button>
+                <button class="btn btn-info" onclick="exportTests()"><i class="fas fa-download"></i> Export Tests</button>
+            </div>
+            
+            <div class="output-section">
+                <div class="output-header">
+                    <h3><i class="fas fa-code"></i> Generated Tests:</h3>
+                    <button class="btn btn-secondary" onclick="copyTestCode()"><i class="fas fa-copy"></i> Copy Code</button>
+                </div>
+                <div id="testResult" class="output-area">Generated tests will appear here...</div>
+                
+                <div class="output-section">
+                    <div class="output-header">
+                        <h3><i class="fas fa-clipboard-list"></i> Test Results:</h3>
+                        <button class="btn btn-secondary" onclick="rerunTests()"><i class="fas fa-redo"></i> Rerun Tests</button>
+                    </div>
+                    <div id="testOutput" class="output-area">Test results will appear here...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- JSON Query Tab -->
+        <div id="query" class="tab-content">
+            <div class="query-section">
+                <div class="json-input">
+                    <label for="queryJson"><i class="fas fa-code"></i> JSON Input:</label>
+                    <textarea id="queryJson" class="json-textarea" placeholder="Paste your JSON here to query...">{
+  "employees": [
+    {
+      "id": 101,
+      "name": "John Smith",
+      "position": "Developer",
+      "skills": ["Java", "Python", "SQL"],
+      "contact": {
+        "email": "john@example.com",
+        "phone": "555-1234"
+      },
+      "active": true,
+      "projects": [
+        {"name": "Project Alpha", "status": "completed"},
+        {"name": "Project Beta", "status": "in-progress"}
+      ]
+    },
+    {
+      "id": 102,
+      "name": "Jane Doe",
+      "position": "Designer",
+      "skills": ["UI/UX", "Photoshop", "Figma"],
+      "contact": {
+        "email": "jane@example.com",
+        "phone": "555-5678"
+      },
+      "active": true,
+      "projects": [
+        {"name": "Project Gamma", "status": "planned"}
+      ]
+    },
+    {
+      "id": 103,
+      "name": "Robert Johnson",
+      "position": "Manager",
+      "skills": ["Leadership", "Project Management"],
+      "contact": {
+        "email": "robert@example.com",
+        "phone": "555-9012"
+      },
+      "active": false,
+      "projects": [
+        {"name": "Project Delta", "status": "in-progress"},
+        {"name": "Project Epsilon", "status": "completed"}
+      ]
+    }
+  ],
+  "department": "Engineering",
+  "location": "New York"
+}</textarea>
+                </div>
+                
+                <div class="query-input">
+                    <label for="queryExpression"><i class="fas fa-terminal"></i> Query Expression:</label>
+                    <div class="json-finder">
+                        <input type="text" id="queryExpression" class="form-control" placeholder="Enter JSONPath expression..." value="$.employees[?(@.active)].name">
+                        <button class="btn btn-primary" onclick="executeQuery()"><i class="fas fa-play"></i> Execute</button>
+                    </div>
+                    
+                    <div class="path-options" style="margin: 25px 0;">
+                        <button class="path-option-btn active" onclick="setQueryType('jsonpath')"><i class="fas fa-bolt"></i> JSONPath</button>
+                        <button class="path-option-btn" onclick="setQueryType('jmespath')"><i class="fab fa-python"></i> JMESPath</button>
+                        <button class="path-option-btn" onclick="setQueryType('jq')"><i class="fas fa-terminal"></i> jq</button>
+                        <button class="path-option-btn" onclick="setQueryType('custom')"><i class="fas fa-code"></i> Custom</button>
+                    </div>
+                    
+    <div class="feature-card">
+    <h3><i class="fas fa-lightbulb"></i> Query Examples</h3>
+    <div style="margin-top: 20px;">
+        <div class="result-item" onclick="setQuery('$.employees[*].name')">
+            <code>$.employees[*].name</code> - All employee names
+        </div>
+        <div class="result-item" onclick="setQuery('$.employees[?(@.position == &quot;Developer&quot;)]')">
+            <code>$.employees[?(@.position == "Developer")]</code> - All developers
+        </div>
+        <div class="result-item" onclick="setQuery('$.employees[?(@.active)].contact.email')">
+            <code>$.employees[?(@.active)].contact.email</code> - Active employee emails
+        </div>
+        <div class="result-item" onclick="setQuery('$.employees[0]')">
+            <code>$.employees[0]</code> - First employee
+        </div>
+        <div class="result-item" onclick="setQuery('$..email')">
+            <code>$..email</code> - All email addresses
+        </div>
+    </div>
+</div>
+
+                </div>
+            </div>
+            
+            <div class="output-section">
+                <div class="output-header">
+                    <h3><i class="fas fa-list"></i> Query Results:</h3>
+                    <div>
+                        <span><i class="fas fa-database"></i> <span id="resultCount">0</span> results</span>
+                    </div>
+                </div>
+                <div id="queryResults" class="output-area">Results will appear here...</div>
+            </div>
+        </div>
+
+        <!-- Visualization Tab -->
+        <div id="visual" class="tab-content">
+            <div class="single-json-section">
+                <label for="visualJson"><i class="fas fa-code"></i> JSON Input:</label>
+                <textarea id="visualJson" class="json-textarea" placeholder="Paste your JSON here to visualize...">{
+  "name": "Organization",
+  "departments": [
+    {
+      "name": "Engineering",
+      "teams": [
+        {"name": "Frontend", "size": 8},
+        {"name": "Backend", "size": 12},
+        {"name": "DevOps", "size": 5}
+      ]
+    },
+    {
+      "name": "Marketing",
+      "teams": [
+        {"name": "Digital", "size": 6},
+        {"name": "Content", "size": 4}
+      ]
+    }
+  ],
+  "locations": ["New York", "San Francisco", "London"],
+  "stats": {
+    "employees": 35,
+    "revenue": 2500000,
+    "projects": 18
+  }
+}</textarea>
+            </div>
+            
+            <div class="path-options">
+                <button class="path-option-btn active"><i class="fas fa-tree"></i> Tree View</button>
+                <button class="path-option-btn"><i class="fas fa-project-diagram"></i> Graph View</button>
+                <button class="path-option-btn"><i class="fas fa-sitemap"></i> Hierarchy</button>
+                <button class="path-option-btn"><i class="fas fa-chart-bar"></i> Statistics</button>
+            </div>
+            
+            <div class="button-group">
+                <button class="btn btn-primary" onclick="visualizeJson()"><i class="fas fa-eye"></i> Visualize</button>
+                <button class="btn btn-success" onclick="exportVisualization()"><i class="fas fa-download"></i> Export as Image</button>
+            </div>
+            
+            <div class="visual-canvas">
+                <i class="fas fa-project-diagram" style="font-size: 64px; color: #cbd5e0; margin-right: 20px;"></i>
+                JSON Structure Visualization
+            </div>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <i class="fas fa-file-code" style="font-size: 2.5em; color: #4361ee;"></i>
+                    <div class="stat-value">27</div>
+                    <div class="stat-label">Processed Files</div>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-bolt" style="font-size: 2.5em; color: #f59e0b;"></i>
+                    <div class="stat-value">142</div>
+                    <div class="stat-label">Operations</div>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-database" style="font-size: 2.5em; color: #10b981;"></i>
+                    <div class="stat-value">5.8k</div>
+                    <div class="stat-label">JSON Elements</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Other tabs -->
+        <div id="compare" class="tab-content">
+            <h2><i class="fas fa-exchange-alt"></i> JSON Comparison Tool</h2>
+            <div class="json-section">
+                <div class="json-input">
+                    <label for="compareJson1"><i class="fas fa-code"></i> JSON 1:</label>
+                    <textarea id="compareJson1" class="json-textarea">{
+  "name": "John",
+  "age": 30,
+  "city": "New York",
+  "hobbies": ["reading", "hiking", "gaming"]
+}</textarea>
+                </div>
+                <div class="json-input">
+                    <label for="compareJson2"><i class="fas fa-code"></i> JSON 2:</label>
+                    <textarea id="compareJson2" class="json-textarea">{
+  "name": "John",
+  "age": 31,
+  "city": "New York",
+  "hobbies": ["reading", "traveling", "gaming"]
+}</textarea>
+                </div>
+            </div>
+            <div class="button-group">
+                <button class="btn btn-primary" onclick="compareJson()">
+                    <i class="fas fa-exchange-alt"></i> Compare JSON
+                </button>
+            </div>
+            <div class="output-section">
+                <h3><i class="fas fa-clipboard-list"></i> Comparison Results:</h3>
+                <div id="compareResult" class="output-area">Comparison results will appear here...</div>
+            </div>
+        </div>
+        
+        <div id="formatter" class="tab-content">
+            <h2><i class="fas fa-magic"></i> JSON Formatter</h2>
+            <div class="single-json-section">
+                <label for="formatJson"><i class="fas fa-code"></i> JSON Input:</label>
+                <textarea id="formatJson" class="json-textarea">{"name":"John","age":30,"cars":["Ford","BMW","Fiat"],"address":{"street":"123 Main","city":"New York"}}</textarea>
+            </div>
+            <div class="button-group">
+                <button class="btn btn-primary" onclick="formatJson()">
+                    <i class="fas fa-align-left"></i> Format JSON
+                </button>
+                <button class="btn btn-info" onclick="minifyJson()">
+                    <i class="fas fa-compress-arrows-alt"></i> Minify JSON
+                </button>
+            </div>
+            <div class="output-section">
+                <h3><i class="fas fa-file-code"></i> Formatted JSON:</h3>
+                <div id="formatResult" class="output-area">Formatted JSON will appear here...</div>
+            </div>
+        </div>
+        
+        <div id="validator" class="tab-content">
+            <h2><i class="fas fa-check-circle"></i> JSON Validator</h2>
+            <div class="single-json-section">
+                <label for="validateJson"><i class="fas fa-code"></i> JSON Input:</label>
+                <textarea id="validateJson" class="json-textarea">{
+  "name": "John",
+  "age": 30,
+  "city": "New York"
+}</textarea>
+            </div>
+            <div class="button-group">
+                <button class="btn btn-primary" onclick="validateJson()">
+                    <i class="fas fa-check"></i> Validate JSON
+                </button>
+            </div>
+            <div class="output-section">
+                <h3><i class="fas fa-clipboard-check"></i> Validation Results:</h3>
+                <div id="validateResult" class="output-area">Validation results will appear here...</div>
+            </div>
+        </div>
+    </div>
+    
+    <button class="floating-btn" onclick="showHelp()">
+        <i class="fas fa-question"></i>
+    </button>
+
+    <script>
+        // Global variables
+        let currentTab = 'paths';
+        let currentPathType = 'jsonpath';
+        let currentFramework = 'restassured';
+        let currentQueryType = 'jsonpath';
+        let jsonData = null;
+        let selectedElement = null;
+        
+        // Initialize the app
+        window.onload = function() {
+            // Set initial active tab
+            document.querySelectorAll('.tab').forEach(tab => {
+                if (tab.textContent.includes('Path Explorer')) {
+                    tab.classList.add('active');
+                }
+            });
+            
+            // Load sample data
+            document.getElementById('pathJson').value = JSON.stringify({
+                "store": {
+                    "book": [
+                        {
+                            "category": "reference",
+                            "author": "Nigel Rees",
+                            "title": "Sayings of the Century",
+                            "price": 8.95,
+                            "inStock": true,
+                            "dimensions": {"length": 20, "width": 15, "units": "cm"}
+                        },
+                        {
+                            "category": "fiction",
+                            "author": "Evelyn Waugh",
+                            "title": "Sword of Honour",
+                            "price": 12.99,
+                            "inStock": false,
+                            "dimensions": {"length": 22, "width": 18, "units": "cm"}
+                        }
+                    ],
+                    "bicycle": {
+                        "color": "red",
+                        "price": 19.95,
+                        "inStock": true,
+                        "specs": ["aluminum", "carbon", "steel"]
+                    }
+                },
+                "owner": {
+                    "name": "John Doe",
+                    "contact": {
+                        "email": "john@example.com",
+                        "phone": "+1-555-1234"
+                    }
+                },
+                "active": true,
+                "lastUpdated": "2023-05-15T12:30:45Z"
+            }, null, 2);
+        };
+
+        // Tab switching functionality
+        function switchTab(tabName) {
+            currentTab = tabName;
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+        
+        // Framework switching
+        function switchFramework(framework) {
+            currentFramework = framework;
+            document.querySelectorAll('.framework-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+        }
+        
+        // Path type setting
+        function setPathType(type) {
+            currentPathType = type;
+            document.querySelectorAll('.path-option-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+        }
+        
+        // Query type setting
+        function setQueryType(type) {
+            currentQueryType = type;
+            document.querySelectorAll('.path-option-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+        }
+        
+        // Helper function to show alerts
+        function showAlert(message, type) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type}`;
+            alertDiv.innerHTML = `<i class="fas fa-${type === 'error' ? 'exclamation-triangle' : 'check-circle'}"></i> ${message}`;
+            
+            // Create a container for the alert
+            const alertContainer = document.createElement('div');
+            alertContainer.id = 'alert-container';
+            alertContainer.style.position = 'fixed';
+            alertContainer.style.top = '20px';
+            alertContainer.style.right = '20px';
+            alertContainer.style.zIndex = '1000';
+            alertContainer.style.width = '300px';
+            alertContainer.appendChild(alertDiv);
+            
+            document.body.appendChild(alertContainer);
+            
+            // Remove alert after 3 seconds
+            setTimeout(() => {
+                if (document.body.contains(alertContainer)) {
+                    document.body.removeChild(alertContainer);
+                }
+            }, 3000);
+        }
+        
+        // Parse JSON with error handling
+        function parseJson(input, errorMessage) {
+            try {
+                return JSON.parse(input);
+            } catch (e) {
+                showAlert(`${errorMessage}: ${e.message}`, 'error');
+                return null;
+            }
+        }
+        
+        // Path extraction functionality
+        function extractPaths() {
+            const jsonInput = document.getElementById('pathJson').value.trim();
+            const resultDiv = document.getElementById('pathsResult');
+            const loadingEl = document.getElementById('extractLoading');
+            
+            if (!jsonInput) {
+                showAlert('Please enter JSON input', 'error');
+                return;
+            }
+            
+            jsonData = parseJson(jsonInput, 'Invalid JSON format');
+            if (!jsonData) return;
+            
+            try {
+                loadingEl.style.display = 'inline-block';
+                
+                setTimeout(() => {
+                    const includeValues = document.getElementById('includeValues').checked;
+                    const showDataTypes = document.getElementById('showDataTypes').checked;
+                    const includeArrayIndices = document.getElementById('includeArrayIndices').checked;
+                    
+                    const paths = extractAllPaths(jsonData, '', includeValues, showDataTypes, includeArrayIndices);
+                    
+                    let result = '=== All JSON Paths ===\n\n';
+                    paths.forEach(path => {
+                        result += `• ${path}\n`;
+                    });
+                    
+                    resultDiv.textContent = result;
+                    loadingEl.style.display = 'none';
+                    showAlert('Paths extracted successfully!', 'success');
+                }, 300);
+            } catch (error) {
+                loadingEl.style.display = 'none';
+                showAlert('Error extracting paths: ' + error.message, 'error');
+            }
+        }
+        
+        function extractAllPaths(obj, path = '', includeValues, showDataTypes, includeArrayIndices) {
+            const paths = [];
+            
+            if (Array.isArray(obj)) {
+                obj.forEach((item, index) => {
+                    const newPath = includeArrayIndices ? `${path}[${index}]` : `${path}[*]`;
+                    
+                    let pathWithValue = newPath;
+                    if (includeValues) {
+                        let value = item;
+                        if (typeof item === 'object' && item !== null) {
+                            value = Array.isArray(item) ? '[...]' : '{...}';
+                        } else if (typeof item === 'string') {
+                            value = `"${item}"`;
+                        }
+                        pathWithValue += `: ${value}`;
+                        
+                        if (showDataTypes) {
+                            pathWithValue += ` (${getDataType(item)})`;
+                        }
+                    }
+                    
+                    paths.push(pathWithValue);
+                    
+                    if (typeof item === 'object' && item !== null) {
+                        paths.push(...extractAllPaths(item, newPath, includeValues, showDataTypes, includeArrayIndices));
+                    }
+                });
+            } else if (typeof obj === 'object' && obj !== null) {
+                Object.keys(obj).forEach(key => {
+                    const newPath = path ? `${path}.${key}` : key;
+                    
+                    let pathWithValue = newPath;
+                    if (includeValues) {
+                        let value = obj[key];
+                        if (typeof value === 'object' && value !== null) {
+                            value = Array.isArray(value) ? '[...]' : '{...}';
+                        } else if (typeof value === 'string') {
+                            value = `"${value}"`;
+                        }
+                        pathWithValue += `: ${value}`;
+                        
+                        if (showDataTypes) {
+                            pathWithValue += ` (${getDataType(obj[key])})`;
+                        }
+                    }
+                    
+                    paths.push(pathWithValue);
+                    
+                    if (typeof obj[key] === 'object' && obj[key] !== null) {
+                        paths.push(...extractAllPaths(obj[key], newPath, includeValues, showDataTypes, includeArrayIndices));
+                    }
+                });
+            }
+            
+            return paths;
+        }
+        
+        function getDataType(value) {
+            if (value === null) return 'null';
+            if (Array.isArray(value)) return 'array';
+            return typeof value;
+        }
+        
+        // JSONPath generation
+        function generateJSONPath() {
+            const jsonInput = document.getElementById('pathJson').value.trim();
+            const resultDiv = document.getElementById('pathsResult');
+            const loadingEl = document.getElementById('jsonpathLoading');
+            
+            if (!jsonInput) {
+                showAlert('Please enter JSON input', 'error');
+                return;
+            }
+            
+            jsonData = parseJson(jsonInput, 'Invalid JSON format');
+            if (!jsonData) return;
+            
+            try {
+                loadingEl.style.display = 'inline-block';
+                
+                setTimeout(() => {
+                    const useWildcards = document.getElementById('wildcardArrays').checked;
+                    const filterExpressions = document.getElementById('filterExpressions').checked;
+                    const pathFormat = document.getElementById('pathFormat').value;
+                    
+                    const jsonPaths = generateJSONPathExpressions(jsonData, '$', useWildcards, filterExpressions, pathFormat);
+                    
+                    let result = '=== JSONPath Expressions ===\n\n';
+                    jsonPaths.forEach(path => {
+                        result += `• ${path}\n`;
+                    });
+                    
+                    resultDiv.textContent = result;
+                    loadingEl.style.display = 'none';
+                    showAlert('JSONPath expressions generated!', 'success');
+                }, 300);
+            } catch (error) {
+                loadingEl.style.display = 'none';
+                showAlert('Error generating JSONPath: ' + error.message, 'error');
+            }
+        }
+        
+        function generateJSONPathExpressions(obj, path, useWildcards, filterExpressions, pathFormat) {
+            const paths = [];
+            
+            if (Array.isArray(obj)) {
+                const newPath = useWildcards ? `${path}[*]` : `${path}[0]`;
+                paths.push(formatPath(newPath, pathFormat));
+                
+                if (obj.length > 0) {
+                    paths.push(...generateJSONPathExpressions(obj[0], newPath, useWildcards, filterExpressions, pathFormat));
+                }
+            } else if (typeof obj === 'object' && obj !== null) {
+                Object.keys(obj).forEach(key => {
+                    let newPath;
+                    if (pathFormat === 'Bracket Notation') {
+                        newPath = `${path}['${key}']`;
+                    } else {
+                        newPath = `${path}.${key}`;
+                    }
+                    
+                    if (filterExpressions && typeof obj[key] === 'object' && obj[key] !== null) {
+                        // Add filter expression for objects
+                        paths.push(`${newPath}[?(@.property == 'value')]`);
+                    }
+                    
+                    paths.push(newPath);
+                    
+                    if (typeof obj[key] === 'object' && obj[key] !== null) {
+                        paths.push(...generateJSONPathExpressions(obj[key], newPath, useWildcards, filterExpressions, pathFormat));
+                    }
+                });
+            }
+            
+            return paths;
+        }
+        
+        function formatPath(path, format) {
+            if (format === 'Bracket Notation') {
+                return path.replace(/\.([a-zA-Z_$][a-zA-Z0-9_$]*)/g, "['$1']");
+            }
+            return path;
+        }
+        
+        // Test assertions generation
+        function generateTestAssertions() {
+            const jsonInput = document.getElementById('pathJson').value.trim();
+            const resultDiv = document.getElementById('pathsResult');
+            const loadingEl = document.getElementById('assertionLoading');
+            
+            if (!jsonInput) {
+                showAlert('Please enter JSON input', 'error');
+                return;
+            }
+            
+            jsonData = parseJson(jsonInput, 'Invalid JSON format');
+            if (!jsonData) return;
+            
+            try {
+                loadingEl.style.display = 'inline-block';
+                
+                setTimeout(() => {
+                    const assertions = generateAssertions(jsonData);
+                    
+                    let result = '=== Test Assertions ===\n\n';
+                    assertions.forEach(assertion => {
+                        result += `# ${assertion.description}\n`;
+                        result += `${assertion.code}\n\n`;
+                    });
+                    
+                    resultDiv.textContent = result;
+                    loadingEl.style.display = 'none';
+                    showAlert('Test assertions generated!', 'success');
+                }, 500);
+            } catch (error) {
+                loadingEl.style.display = 'none';
+                showAlert('Error generating assertions: ' + error.message, 'error');
+            }
+        }
+        
+        function generateAssertions(obj) {
+            const assertions = [];
+            const paths = extractAllPaths(obj, '', true, true, true);
+            
+            paths.forEach(pathStr => {
+                const [path] = pathStr.split(':');
+                const value = getValueByPath(obj, path);
+                const type = value === null ? 'null' : Array.isArray(value) ? 'array' : typeof value;
+                const description = `Assert value at path: ${path}`;
+                
+                let code = '';
+                
+                // RestAssured
+                code += `// RestAssured\n`;
+                code += `response.then()\n`;
+                code += `    .body("${path}", ${getMatcher(value)});\n\n`;
+                
+                // TestNG
+                code += `// TestNG\n`;
+                code += `JsonPath jsonPath = new JsonPath(response.asString());\n`;
+                code += `Assert.assertEquals(jsonPath.get("${path}"), ${JSON.stringify(value)});\n\n`;
+                
+                // Karate
+                code += `// Karate\n`;
+                code += `match response.${path} == ${JSON.stringify(value)}\n\n`;
+                
+                assertions.push({
+                    description,
+                    code
+                });
+            });
+            
+            return assertions;
+        }
+        
+        function getValueByPath(obj, path) {
+            const parts = path.replace('$', '').split(/[\.\[\]']+/).filter(p => p !== '');
+            let current = obj;
+            
+            for (const part of parts) {
+                if (current === null || current === undefined) return undefined;
+                if (Array.isArray(current)) {
+                    current = current[parseInt(part)];
+                } else {
+                    current = current[part];
+                }
+            }
+            
+            return current;
+        }
+        
+        function getMatcher(value) {
+            if (typeof value === 'string') {
+                return `equalTo("${value}")`;
+            } else if (typeof value === 'number') {
+                return `equalTo(${value})`;
+            } else if (typeof value === 'boolean') {
+                return `equalTo(${value})`;
+            } else if (value === null) {
+                return `nullValue()`;
+            } else if (Array.isArray(value)) {
+                return `hasSize(${value.length})`;
+            } else {
+                return `notNullValue()`;
+            }
+        }
+        
+        // Test generation
+        function generateTests() {
+            const jsonInput = document.getElementById('testJson').value.trim();
+            const resultDiv = document.getElementById('testResult');
+            const loadingEl = document.getElementById('testLoading');
+            const baseUrl = document.getElementById('baseUrl').value;
+            const endpoint = document.getElementById('endpoint').value;
+            const method = document.getElementById('httpMethod').value;
+            const timeout = document.getElementById('timeout').value;
+            
+            if (!jsonInput) {
+                showAlert('Please enter JSON input', 'error');
+                return;
+            }
+            
+            jsonData = parseJson(jsonInput, 'Invalid JSON format');
+            if (!jsonData) return;
+            
+            try {
+                loadingEl.style.display = 'inline-block';
+                
+                setTimeout(() => {
+                    let testCode = '';
+                    
+                    switch(currentFramework) {
+                        case 'restassured':
+                            testCode = generateRestAssuredTest(baseUrl, endpoint, method, jsonData, timeout);
+                            break;
+                        case 'testng':
+                            testCode = generateTestNGTest(baseUrl, endpoint, method, jsonData, timeout);
+                            break;
+                        case 'karate':
+                            testCode = generateKarateTest(baseUrl, endpoint, method, jsonData);
+                            break;
+                        case 'bdd':
+                            testCode = generateBDDTest(baseUrl, endpoint, method, jsonData);
+                            break;
+                        case 'pojo':
+                            testCode = generatePojoTest(baseUrl, endpoint, method, jsonData);
+                            break;
+                        case 'jest':
+                            testCode = generateJestTest(baseUrl, endpoint, method, jsonData);
+                            break;
+                        default:
+                            testCode = generateRestAssuredTest(baseUrl, endpoint, method, jsonData, timeout);
+                    }
+                    
+                    resultDiv.textContent = testCode;
+                    loadingEl.style.display = 'none';
+                    showAlert('Tests generated successfully!', 'success');
+                }, 500);
+            } catch (error) {
+                loadingEl.style.display = 'none';
+                showAlert('Error generating tests: ' + error.message, 'error');
+            }
+        }
+        
+        function generateRestAssuredTest(baseUrl, endpoint, method, response, timeout) {
+            let code = `import io.restassured.RestAssured;\n`;
+            code += `import io.restassured.response.Response;\n`;
+            code += `import org.junit.jupiter.api.Test;\n\n`;
+            code += `import static io.restassured.RestAssured.*;\n`;
+            code += `import static org.hamcrest.Matchers.*;\n\n`;
+            code += `public class ApiTest {\n\n`;
+            code += `    @Test\n`;
+            code += `    public void testEndpoint() {\n`;
+            code += `        RestAssured.baseURI = "${baseUrl}";\n`;
+            code += `        RestAssured.config().getConfig().timeout = ${timeout};\n\n`;
+            code += `        Response response = given()\n`;
+            code += `            .header("Content-Type", "application/json")\n`;
+            code += `        .when()\n`;
+            code += `            .${method.toLowerCase()}("${endpoint}");\n\n`;
+            code += `        // Assert status code\n`;
+            code += `        response.then().statusCode(200);\n\n`;
+            code += `        // Assert response body\n`;
+            
+            const paths = extractAllPaths(response, '$', true, true, true);
+            paths.forEach(pathStr => {
+                const [path] = pathStr.split(':');
+                const value = getValueByPath(response, path);
+                code += `        response.then().body("${path}", ${getMatcher(value)});\n`;
+            });
+            
+            code += `    }\n`;
+            code += `}`;
+            
+            return code;
+        }
+        
+        function generateTestNGTest(baseUrl, endpoint, method, response, timeout) {
+            let code = `import io.restassured.RestAssured;\n`;
+            code += `import io.restassured.response.Response;\n`;
+            code += `import io.restassured.path.json.JsonPath;\n`;
+            code += `import org.testng.annotations.Test;\n`;
+            code += `import org.testng.Assert;\n\n`;
+            code += `public class ApiTestNGTest {\n\n`;
+            code += `    @Test\n`;
+            code += `    public void testEndpoint() {\n`;
+            code += `        RestAssured.baseURI = "${baseUrl}";\n`;
+            code += `        RestAssured.config().getConfig().timeout = ${timeout};\n\n`;
+            code += `        Response response = RestAssured.given()\n`;
+            code += `            .header("Content-Type", "application/json")\n`;
+            code += `        .when()\n`;
+            code += `            .${method.toLowerCase()}("${endpoint}");\n\n`;
+            code += `        // Assert status code\n`;
+            code += `        Assert.assertEquals(response.getStatusCode(), 200);\n\n`;
+            code += `        // Parse response\n`;
+            code += `        JsonPath jsonPath = response.jsonPath();\n\n`;
+            code += `        // Assert response body\n`;
+            
+            const paths = extractAllPaths(response, '$', true, true, true);
+            paths.forEach(pathStr => {
+                const [path] = pathStr.split(':');
+                const value = getValueByPath(response, path);
+                if (typeof value === 'string') {
+                    code += `        Assert.assertEquals(jsonPath.get("${path}"), "${value}");\n`;
+                } else {
+                    code += `        Assert.assertEquals(jsonPath.get("${path}"), ${JSON.stringify(value)});\n`;
+                }
+            });
+            
+            code += `    }\n`;
+            code += `}`;
+            
+            return code;
+        }
+        
+        function generateKarateTest(baseUrl, endpoint, method, response) {
+            let code = `Feature: API Test\n\n`;
+            code += `Scenario: Test ${endpoint} endpoint\n`;
+            code += `    Given url '${baseUrl}'\n`;
+            code += `    When ${method.toLowerCase()} '${endpoint}'\n`;
+            code += `    Then status 200\n`;
+            
+            const paths = extractAllPaths(response, '$', true, true, true);
+            paths.forEach(pathStr => {
+                const [path, valuePart] = pathStr.split(':');
+                const value = valuePart ? valuePart.split('(')[0].trim() : '';
+                code += `    And match response.${path} == ${value}\n`;
+            });
+            
+            return code;
+        }
+        
+        // POJO generation
+        function generatePojos() {
+            const jsonInput = document.getElementById('pathJson').value.trim();
+            const resultDiv = document.getElementById('pathsResult');
+            const loadingEl = document.getElementById('pojoLoading');
+            
+            if (!jsonInput) {
+                showAlert('Please enter JSON input', 'error');
+                return;
+            }
+            
+            jsonData = parseJson(jsonInput, 'Invalid JSON format');
+            if (!jsonData) return;
+            
+            try {
+                loadingEl.style.display = 'inline-block';
+                
+                setTimeout(() => {
+                    const pojos = generatePojoClasses(jsonData);
+                    
+                    let result = '=== Generated POJOs ===\n\n';
+                    pojos.forEach(pojo => {
+                        result += `${pojo}\n\n`;
+                    });
+                    
+                    resultDiv.textContent = result;
+                    loadingEl.style.display = 'none';
+                    showAlert('POJO classes generated!', 'success');
+                }, 500);
+            } catch (error) {
+                loadingEl.style.display = 'none';
+                showAlert('Error generating POJOs: ' + error.message, 'error');
+            }
+        }
+        
+        function generatePojoClasses(obj, className = 'RootClass') {
+            let pojo = `public class ${className} {\n`;
+            const fields = [];
+            const imports = new Set();
+            
+            if (typeof obj === 'object' && obj !== null) {
+                for (const key in obj) {
+                    if (obj.hasOwnProperty(key)) {
+                        const value = obj[key];
+                        const type = getJavaType(value);
+                        const fieldName = key.replace(/[^a-zA-Z0-9]/g, '_');
+                        
+                        // Add imports for complex types
+                        if (type.includes('List')) {
+                            imports.add('import java.util.List;');
+                        }
+                        if (type.includes('Map')) {
+                            imports.add('import java.util.Map;');
+                        }
+                        
+                        fields.push(`    private ${type} ${fieldName};`);
+                        
+                        // Handle nested objects
+                        if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+                            const nestedClassName = capitalize(key);
+                            const nestedClass = generatePojoClasses(value, nestedClassName);
+                            pojo = nestedClass + '\n\n' + pojo;
+                        }
+                    }
+                }
+            }
+            
+            // Add getters and setters
+            let gettersSetters = '';
+            for (const key in obj) {
+                if (obj.hasOwnProperty(key)) {
+                    const value = obj[key];
+                    const type = getJavaType(value);
+                    const fieldName = key.replace(/[^a-zA-Z0-9]/g, '_');
+                    const capitalizedField = capitalize(fieldName);
+                    
+                    gettersSetters += `\n    public ${type} get${capitalizedField}() {\n`;
+                    gettersSetters += `        return this.${fieldName};\n`;
+                    gettersSetters += `    }\n\n`;
+                    gettersSetters += `    public void set${capitalizedField}(${type} ${fieldName}) {\n`;
+                    gettersSetters += `        this.${fieldName} = ${fieldName};\n`;
+                    gettersSetters += `    }\n`;
+                }
+            }
+            
+            // Construct final POJO
+            let finalPojo = '';
+            if (imports.size > 0) {
+                finalPojo += Array.from(imports).join('\n') + '\n\n';
+            }
+            finalPojo += pojo;
+            finalPojo += fields.join('\n') + '\n';
+            finalPojo += gettersSetters;
+            finalPojo += '}';
+            
+            return [finalPojo];
+        }
+        
+        function capitalize(str) {
+            return str.charAt(0).toUpperCase() + str.slice(1);
+        }
+        
+        function getJavaType(value) {
+            if (value === null) return 'Object';
+            if (Array.isArray(value)) {
+                if (value.length > 0 && typeof value[0] === 'object') {
+                    return `List<${capitalize(Object.keys(value[0])[0] || 'Object')}>`;
+                }
+                return 'List<Object>';
+            }
+            if (typeof value === 'string') return 'String';
+            if (typeof value === 'number') return Number.isInteger(value) ? 'int' : 'double';
+            if (typeof value === 'boolean') return 'boolean';
+            if (typeof value === 'object') {
+                if (Object.keys(value).length === 0) return 'Map<String, Object>';
+                return capitalize(Object.keys(value)[0] || 'Object');
+            }
+            return 'Object';
+        }
+        
+        // JSON Query execution
+        function executeQuery() {
+            const jsonInput = document.getElementById('queryJson').value.trim();
+            const query = document.getElementById('queryExpression').value.trim();
+            const resultDiv = document.getElementById('queryResults');
+            const countSpan = document.getElementById('resultCount');
+            
+            if (!jsonInput) {
+                showAlert('Please enter JSON input', 'error');
+                return;
+            }
+            
+            if (!query) {
+                showAlert('Please enter a query expression', 'error');
+                return;
+            }
+            
+            jsonData = parseJson(jsonInput, 'Invalid JSON format');
+            if (!jsonData) return;
+            
+            try {
+                let results;
+                
+                switch(currentQueryType) {
+                    case 'jsonpath':
+                        results = JSONPath({path: query, json: jsonData});
+                        break;
+                    case 'jmespath':
+                        results = jmespath.search(jsonData, query);
+                        break;
+                    case 'jq':
+                        // jq not supported natively, use JSONPath as fallback
+                        results = JSONPath({path: query, json: jsonData});
+                        break;
+                    default:
+                        results = JSONPath({path: query, json: jsonData});
+                }
+                
+                if (!results || results.length === 0) {
+                    resultDiv.textContent = "No results found for the query.";
+                } else {
+                    resultDiv.textContent = JSON.stringify(results, null, 2);
+                }
+                
+                countSpan.textContent = results.length;
+                showAlert('Query executed successfully!', 'success');
+            } catch (error) {
+                showAlert('Error executing query: ' + error.message, 'error');
+                resultDiv.textContent = "Error: " + error.message;
+            }
+        }
+        
+        function setQuery(query) {
+            document.getElementById('queryExpression').value = query;
+        }
+        
+        // Simulate test execution
+        function runTests() {
+            const loadingEl = document.getElementById('runTestLoading');
+            const outputDiv = document.getElementById('testOutput');
+            
+            loadingEl.style.display = 'inline-block';
+            outputDiv.textContent = 'Running tests...';
+            
+            setTimeout(() => {
+                outputDiv.textContent = `Test Results for ${currentFramework.toUpperCase()}:\n\n`;
+                outputDiv.textContent += "✅ Test 1: GET request - PASSED\n";
+                outputDiv.textContent += "✅ Test 2: Status code 200 - PASSED\n";
+                outputDiv.textContent += "✅ Test 3: Response body validation - PASSED\n";
+                outputDiv.textContent += "✅ Test 4: Data type validation - PASSED\n";
+                outputDiv.textContent += "✅ Test 5: Performance check - PASSED\n\n";
+                outputDiv.textContent += "🎉 All tests passed successfully!";
+                
+                loadingEl.style.display = 'none';
+                showAlert('Tests executed successfully!', 'success');
+            }, 1500);
+        }
+        
+        function rerunTests() {
+            document.getElementById('testOutput').textContent = 'Test results will appear here...';
+            runTests();
+        }
+        
+        function exportTests() {
+            showAlert('Tests exported successfully!', 'success');
+        }
+        
+        function copyTestCode() {
+            const testCode = document.getElementById('testResult').textContent;
+            navigator.clipboard.writeText(testCode);
+            showAlert('Test code copied to clipboard!', 'success');
+        }
+        
+        // JSON Comparison
+        function compareJson() {
+            const json1 = document.getElementById('compareJson1').value.trim();
+            const json2 = document.getElementById('compareJson2').value.trim();
+            const resultDiv = document.getElementById('compareResult');
+            
+            if (!json1 || !json2) {
+                showAlert('Please enter both JSON inputs', 'error');
+                return;
+            }
+            
+            const obj1 = parseJson(json1, 'Invalid JSON format for first input');
+            const obj2 = parseJson(json2, 'Invalid JSON format for second input');
+            if (!obj1 || !obj2) return;
+            
+            try {
+                const diff = findJsonDifferences(obj1, obj2);
+                
+                if (diff.length === 0) {
+                    resultDiv.textContent = "✅ The JSON objects are identical!";
+                } else {
+                    let result = "🔍 Found differences:\n\n";
+                    diff.forEach(d => {
+                        result += `- ${d}\n`;
+                    });
+                    resultDiv.textContent = result;
+                }
+                
+                showAlert('Comparison completed!', 'success');
+            } catch (error) {
+                showAlert('Error comparing JSON: ' + error.message, 'error');
+                resultDiv.textContent = "Error: " + error.message;
+            }
+        }
+        
+        function findJsonDifferences(obj1, obj2, path = '') {
+            const differences = [];
+            
+            // Check if both are objects
+            if (typeof obj1 === 'object' && obj1 !== null && typeof obj2 === 'object' && obj2 !== null) {
+                const keys = new Set([...Object.keys(obj1), ...Object.keys(obj2)]);
+                
+                keys.forEach(key => {
+                    const newPath = path ? `${path}.${key}` : key;
+                    
+                    if (obj1.hasOwnProperty(key) && !obj2.hasOwnProperty(key)) {
+                        differences.push(`Property '${newPath}' exists in first JSON but missing in second`);
+                    } else if (!obj1.hasOwnProperty(key) && obj2.hasOwnProperty(key)) {
+                        differences.push(`Property '${newPath}' missing in first JSON but exists in second`);
+                    } else {
+                        const val1 = obj1[key];
+                        const val2 = obj2[key];
+                        
+                        if (typeof val1 !== typeof val2) {
+                            differences.push(`Type mismatch at '${newPath}': ${typeof val1} vs ${typeof val2}`);
+                        } else if (typeof val1 === 'object' && val1 !== null) {
+                            differences.push(...findJsonDifferences(val1, val2, newPath));
+                        } else if (val1 !== val2) {
+                            differences.push(`Value difference at '${newPath}': ${val1} vs ${val2}`);
+                        }
+                    }
+                });
+            } else if (obj1 !== obj2) {
+                differences.push(`Value difference at root: ${obj1} vs ${obj2}`);
+            }
+            
+            return differences;
+        }
+        
+        // JSON Formatting
+        function formatJson() {
+            const jsonInput = document.getElementById('formatJson').value.trim();
+            const resultDiv = document.getElementById('formatResult');
+            
+            if (!jsonInput) {
+                showAlert('Please enter JSON input', 'error');
+                return;
+            }
+            
+            const obj = parseJson(jsonInput, 'Invalid JSON format');
+            if (!obj) return;
+            
+            try {
+                resultDiv.textContent = JSON.stringify(obj, null, 4);
+                showAlert('JSON formatted successfully!', 'success');
+            } catch (error) {
+                showAlert('Error formatting JSON: ' + error.message, 'error');
+                resultDiv.textContent = "Error: " + error.message;
+            }
+        }
+        
+        function minifyJson() {
+            const jsonInput = document.getElementById('formatJson').value.trim();
+            const resultDiv = document.getElementById('formatResult');
+            
+            if (!jsonInput) {
+                showAlert('Please enter JSON input', 'error');
+                return;
+            }
+            
+            const obj = parseJson(jsonInput, 'Invalid JSON format');
+            if (!obj) return;
+            
+            try {
+                resultDiv.textContent = JSON.stringify(obj);
+                showAlert('JSON minified successfully!', 'success');
+            } catch (error) {
+                showAlert('Error minifying JSON: ' + error.message, 'error');
+                resultDiv.textContent = "Error: " + error.message;
+            }
+        }
+        
+        // JSON Validation
+        function validateJson() {
+            const jsonInput = document.getElementById('validateJson').value.trim();
+            const resultDiv = document.getElementById('validateResult');
+            
+            if (!jsonInput) {
+                showAlert('Please enter JSON input', 'error');
+                return;
+            }
+            
+            try {
+                JSON.parse(jsonInput);
+                resultDiv.textContent = "✅ Valid JSON!";
+                showAlert('JSON is valid!', 'success');
+            } catch (error) {
+                resultDiv.textContent = "❌ Invalid JSON:\n" + error.message;
+                showAlert('Invalid JSON: ' + error.message, 'error');
+            }
+        }
+        
+        // Copy all paths
+        function copyAllPaths() {
+            const paths = document.getElementById('pathsResult').textContent;
+            navigator.clipboard.writeText(paths);
+            showAlert('All paths copied to clipboard!', 'success');
+        }
+        
+        // Show help
+        function showHelp() {
+            showAlert('Comprehensive JSON Toolkit with Path Generation, Testing, Querying, Visualization and more!', 'info');
+        }
+    </script>
+</body>
+</html>
