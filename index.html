@@ -3,10 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced JSON Toolkit</title>
+    <title>Advanced Data Toolkit</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/jsonpath-plus@7.0.0/dist/index-umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jmespath/1.0.0/jmespath.min.js"></script>
     <style>
         :root {
             --primary: #4361ee;
@@ -19,6 +18,10 @@
             --dark: #1d3557;
             --gradient-start: #4361ee;
             --gradient-end: #3a0ca3;
+            --xml-color: #ff6b00;
+            --html-color: #e44d26;
+            --json-color: #f7df1e;
+            --path-color: #8f5fe8;
         }
         
         * {
@@ -210,6 +213,21 @@
 
         .btn-info {
             background: linear-gradient(135deg, var(--info), #138496);
+            color: white;
+        }
+        
+        .btn-xml {
+            background: linear-gradient(135deg, var(--xml-color), #d35400);
+            color: white;
+        }
+        
+        .btn-html {
+            background: linear-gradient(135deg, var(--html-color), #c0392b);
+            color: white;
+        }
+        
+        .btn-path {
+            background: linear-gradient(135deg, var(--path-color), #6a11cb);
             color: white;
         }
 
@@ -406,60 +424,23 @@
             color: white;
             box-shadow: 0 5px 15px rgba(67, 97, 238, 0.2);
         }
+        
+        .path-option-btn.xml {
+            background: linear-gradient(135deg, var(--xml-color), #d35400);
+            color: white;
+        }
+        
+        .path-option-btn.html {
+            background: linear-gradient(135deg, var(--html-color), #c0392b);
+            color: white;
+        }
+        
+        .path-option-btn.path {
+            background: linear-gradient(135deg, var(--path-color), #6a11cb);
+            color: white;
+        }
 
         .path-option-btn:hover:not(.active) {
-            background: #e2e8f0;
-        }
-
-        .test-case {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 15px;
-            padding: 20px;
-            margin: 15px 0;
-            transition: transform 0.3s ease;
-        }
-
-        .test-case:hover {
-            transform: translateX(5px);
-        }
-
-        .test-case h4 {
-            color: #2d3748;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .framework-tabs {
-            display: flex;
-            margin-bottom: 25px;
-            border-bottom: 1px solid #e2e8f0;
-            flex-wrap: wrap;
-        }
-
-        .framework-tab {
-            padding: 15px 25px;
-            cursor: pointer;
-            background: #f1f5f9;
-            border: none;
-            font-size: 16px;
-            font-weight: 500;
-            border-bottom: 3px solid transparent;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            transition: all 0.3s ease;
-        }
-
-        .framework-tab.active {
-            border-bottom-color: var(--primary);
-            background: white;
-            color: var(--primary);
-        }
-
-        .framework-tab:hover:not(.active) {
             background: #e2e8f0;
         }
 
@@ -532,25 +513,12 @@
             padding: 18px;
             margin: 12px 0;
             transition: transform 0.3s ease;
+            cursor: pointer;
         }
 
         .result-item:hover {
             transform: translateX(5px);
             border-left: 4px solid var(--primary);
-        }
-
-        .pojo-output {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 15px;
-            padding: 25px;
-            margin-top: 25px;
-            font-family: 'Fira Code', monospace;
-            white-space: pre;
-            overflow-x: auto;
-            max-height: 500px;
-            line-height: 1.6;
-            font-size: 14px;
         }
 
         .visual-canvas {
@@ -730,6 +698,163 @@
             margin-left: 10px;
             font-style: italic;
         }
+        
+        .input-type-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .type-btn {
+            padding: 8px 15px;
+            border-radius: 8px;
+            background: #e2e8f0;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .type-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .xml-output {
+            color: var(--xml-color);
+        }
+        
+        .html-output {
+            color: var(--html-color);
+        }
+        
+        .json-output {
+            color: var(--json-color);
+        }
+        
+        .path-output {
+            color: var(--path-color);
+        }
+        
+        .data-type-badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+        
+        .xml-badge {
+            background: rgba(255, 107, 0, 0.1);
+            color: var(--xml-color);
+        }
+        
+        .html-badge {
+            background: rgba(228, 77, 38, 0.1);
+            color: var(--html-color);
+        }
+        
+        .json-badge {
+            background: rgba(247, 223, 30, 0.1);
+            color: var(--json-color);
+        }
+        
+        .path-badge {
+            background: rgba(143, 95, 232, 0.1);
+            color: var(--path-color);
+        }
+
+        .path-visualization {
+            display: flex;
+            flex-direction: column;
+            margin-top: 20px;
+            background: #f8fafc;
+            border-radius: 15px;
+            padding: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .path-node {
+            padding: 10px;
+            margin: 5px 0;
+            border-left: 3px solid var(--path-color);
+            background: rgba(143, 95, 232, 0.05);
+            border-radius: 0 8px 8px 0;
+        }
+
+        .path-node:hover {
+            background: rgba(143, 95, 232, 0.1);
+        }
+
+        .path-node-key {
+            font-weight: 600;
+            color: var(--path-color);
+        }
+
+        .path-node-value {
+            font-family: 'Fira Code', monospace;
+            font-size: 14px;
+            margin-left: 10px;
+            color: #555;
+        }
+
+        .path-node-type {
+            font-size: 12px;
+            background: rgba(143, 95, 232, 0.1);
+            color: var(--path-color);
+            padding: 2px 8px;
+            border-radius: 10px;
+            margin-left: 10px;
+        }
+
+        .path-stats {
+            display: flex;
+            gap: 15px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            background: white;
+            border-radius: 10px;
+            padding: 12px 15px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .stat-item-value {
+            font-weight: 700;
+            font-size: 20px;
+            color: var(--path-color);
+        }
+
+        .stat-item-label {
+            font-size: 14px;
+            color: #718096;
+        }
+
+        .query-results {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 15px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .query-result-item {
+            padding: 12px;
+            border-bottom: 1px solid #e2e8f0;
+            font-family: 'Fira Code', monospace;
+            font-size: 14px;
+        }
+
+        .query-result-item:last-child {
+            border-bottom: none;
+        }
 
         @media (max-width: 1200px) {
             .json-section, .query-section {
@@ -778,31 +903,37 @@
             .header p {
                 font-size: 1.1em;
             }
+            
+            .path-stats {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1><i class="fas fa-rocket"></i> Advanced JSON Toolkit</h1>
-            <p>Professional JSON Path Generation, Testing, Querying & Validation Suite</p>
+            <h1><i class="fas fa-rocket"></i> Advanced Data Toolkit</h1>
+            <p>Professional JSON, XML & HTML Processing with Enhanced Query Capabilities</p>
         </div>
 
         <div class="tabs">
             <button class="tab active" onclick="switchTab('paths')"><i class="fas fa-route"></i> Path Explorer</button>
-            <button class="tab" onclick="switchTab('testing')"><i class="fas fa-vial"></i> Testing Frameworks</button>
-            <button class="tab" onclick="switchTab('query')"><i class="fas fa-search"></i> JSON Query</button>
-            <button class="tab" onclick="switchTab('compare')"><i class="fas fa-exchange-alt"></i> JSON Compare</button>
-            <button class="tab" onclick="switchTab('formatter')"><i class="fas fa-magic"></i> Formatter</button>
-            <button class="tab" onclick="switchTab('validator')"><i class="fas fa-check-circle"></i> Validator</button>
-            <button class="tab" onclick="switchTab('visual')"><i class="fas fa-network-wired"></i> Visualization</button>
+            <button class="tab" onclick="switchTab('query')"><i class="fas fa-search"></i> Data Query</button>
+            <button class="tab" onclick="switchTab('converter')"><i class="fas fa-exchange-alt"></i> Converter</button>
+            <button class="tab" onclick="switchTab('visualize')"><i class="fas fa-project-diagram"></i> Visualize</button>
         </div>
 
-        <!-- Path Generator Tab -->
+        <!-- Path Explorer Tab -->
         <div id="paths" class="tab-content active">
             <div class="single-json-section">
-                <label for="pathJson"><i class="fas fa-code"></i> JSON Input:</label>
-                <textarea id="pathJson" class="json-textarea" placeholder="Paste your JSON here to generate paths...">{
+                <div class="input-type-selector">
+                    <button class="type-btn active" onclick="setInputType('json')">JSON</button>
+                    <button class="type-btn" onclick="setInputType('xml')">XML</button>
+                    <button class="type-btn" onclick="setInputType('html')">HTML</button>
+                </div>
+                <label for="pathJson"><i class="fas fa-code"></i> Data Input:</label>
+                <textarea id="pathJson" class="json-textarea" placeholder="Paste your JSON, XML or HTML here...">{
   "store": {
     "book": [
       {
@@ -848,20 +979,19 @@
                         <label><input type="checkbox" id="includeArrayIndices" checked> Include Array Indices</label>
                         <label><input type="checkbox" id="includeValues" checked> Include Values</label>
                         <label><input type="checkbox" id="showDataTypes" checked> Show Data Types</label>
-                        <label><input type="checkbox" id="generateQueries"> Generate Query Examples</label>
+                        <label><input type="checkbox" id="generateQueries" checked> Generate Query Examples</label>
                     </div>
                     <div class="path-options">
-                        <button class="path-option-btn active" onclick="setPathType('jsonpath')"><i class="fas fa-bolt"></i> JSONPath</button>
-                        <button class="path-option-btn" onclick="setPathType('gpath')"><i class="fas fa-project-diagram"></i> GPath</button>
-                        <button class="path-option-btn" onclick="setPathType('xpath')"><i class="fas fa-sitemap"></i> XPath</button>
-                        <button class="path-option-btn" onclick="setPathType('jq')"><i class="fas fa-terminal"></i> jq</button>
+                        <button class="path-option-btn active path" onclick="setPathType('jsonpath')"><i class="fas fa-bolt"></i> JSONPath</button>
+                        <button class="path-option-btn xml" onclick="setPathType('xpath')"><i class="fas fa-sitemap"></i> XPath</button>
+                        <button class="path-option-btn html" onclick="setPathType('css')"><i class="fas fa-tag"></i> CSS Selectors</button>
                     </div>
                 </div>
                 <div class="feature-card">
                     <h3><i class="fas fa-sliders-h"></i> Advanced Options</h3>
                     <div class="checkbox-group">
                         <label><input type="checkbox" id="wildcardArrays" checked> Use Wildcards for Arrays</label>
-                        <label><input type="checkbox" id="filterExpressions"> Generate Filter Expressions</label>
+                        <label><input type="checkbox" id="filterExpressions" checked> Generate Filter Expressions</label>
                         <label><input type="checkbox" id="deepScan" checked> Deep Scan for Nested Objects</label>
                         <label><input type="checkbox" id="generatePojos"> Generate POJOs</label>
                     </div>
@@ -877,26 +1007,37 @@
             </div>
             
             <div class="button-group">
-                <button class="btn btn-primary" onclick="extractPaths()">
+                <button class="btn btn-path" onclick="extractPaths()">
                     <span class="loading" id="extractLoading" style="display:none"></span>
                     <i class="fas fa-sitemap"></i> Extract Paths
                 </button>
-                <button class="btn btn-success" onclick="generateJSONPath()">
+                <button class="btn btn-primary" onclick="generateJSONPath()">
                     <span class="loading" id="jsonpathLoading" style="display:none"></span>
                     <i class="fas fa-bolt"></i> Generate JSONPath
                 </button>
-                <button class="btn btn-info" onclick="generateGPath()">
-                    <span class="loading" id="gpathLoading" style="display:none"></span>
-                    <i class="fas fa-project-diagram"></i> Generate GPath
+                <button class="btn btn-xml" onclick="generateXPath()">
+                    <span class="loading" id="xpathLoading" style="display:none"></span>
+                    <i class="fas fa-project-diagram"></i> Generate XPath
                 </button>
-                <button class="btn btn-warning" onclick="generateTestAssertions()">
-                    <span class="loading" id="assertionLoading" style="display:none"></span>
-                    <i class="fas fa-vial"></i> Generate Test Assertions
+                <button class="btn btn-html" onclick="generateCSSSelectors()">
+                    <span class="loading" id="cssLoading" style="display:none"></span>
+                    <i class="fas fa-tag"></i> Generate CSS Selectors
                 </button>
-                <button class="btn btn-danger" onclick="generatePojos()">
-                    <span class="loading" id="pojoLoading" style="display:none"></span>
-                    <i class="fas fa-file-code"></i> Generate POJOs
-                </button>
+            </div>
+            
+            <div class="path-stats">
+                <div class="stat-item">
+                    <div class="stat-item-value" id="pathCount">0</div>
+                    <div class="stat-item-label">Paths Generated</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-item-value" id="depthCount">0</div>
+                    <div class="stat-item-label">Max Depth</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-item-value" id="nodeCount">0</div>
+                    <div class="stat-item-label">Total Nodes</div>
+                </div>
             </div>
             
             <div class="output-section">
@@ -904,105 +1045,21 @@
                     <h3><i class="fas fa-list"></i> Generated Paths:</h3>
                     <button class="btn btn-secondary" onclick="copyAllPaths()"><i class="fas fa-copy"></i> Copy All</button>
                 </div>
-                <div id="pathsResult" class="output-area">Enter JSON to generate paths...</div>
+                <div id="pathsResult" class="output-area path-output">Enter data to generate paths...</div>
             </div>
         </div>
 
-        <!-- Testing Frameworks Tab -->
-        <div id="testing" class="tab-content">
-            <div class="single-json-section">
-                <label for="testJson"><i class="fas fa-code"></i> JSON Input:</label>
-                <textarea id="testJson" class="json-textarea" placeholder="Paste your JSON here to generate tests...">{
-  "status": "success",
-  "data": {
-    "id": 123,
-    "name": "John Doe",
-    "email": "john@example.com",
-    "roles": ["admin", "user"],
-    "active": true,
-    "preferences": {
-      "theme": "dark",
-      "notifications": true,
-      "language": "en"
-    }
-  },
-  "timestamp": "2023-05-15T12:30:45Z",
-  "version": "1.2.0"
-}</textarea>
-            </div>
-            
-            <div class="framework-tabs">
-                <button class="framework-tab active" onclick="switchFramework('restassured')"><i class="fas fa-shield-alt"></i> RestAssured</button>
-                <button class="framework-tab" onclick="switchFramework('testng')"><i class="fas fa-flask"></i> TestNG</button>
-                <button class="framework-tab" onclick="switchFramework('karate')"><i class="fas fa-paw"></i> Karate</button>
-                <button class="framework-tab" onclick="switchFramework('bdd')"><i class="fas fa-leaf"></i> BDD (Cucumber)</button>
-                <button class="framework-tab" onclick="switchFramework('pojo')"><i class="fas fa-file-code"></i> POJO & Hamcrest</button>
-                <button class="framework-tab" onclick="switchFramework('jest')"><i class="fab fa-js"></i> Jest</button>
-            </div>
-            
-            <div class="feature-grid">
-                <div class="feature-card">
-                    <h3><i class="fas fa-cog"></i> API Configuration</h3>
-                    <input type="text" id="baseUrl" class="form-control" value="https://api.example.com" placeholder="Base URL">
-                    <input type="text" id="endpoint" class="form-control" value="/users/123" placeholder="Endpoint">
-                    <select id="httpMethod" class="form-control">
-                        <option value="GET">GET</option>
-                        <option value="POST">POST</option>
-                        <option value="PUT">PUT</option>
-                        <option value="DELETE">DELETE</option>
-                        <option value="PATCH">PATCH</option>
-                    </select>
-                </div>
-                <div class="feature-card">
-                    <h3><i class="fas fa-sliders-h"></i> Test Options</h3>
-                    <div class="checkbox-group">
-                        <label><input type="checkbox" id="generateAssertions" checked> Generate Assertions</label>
-                        <label><input type="checkbox" id="generateDataProvider"> Generate Test Data</label>
-                        <label><input type="checkbox" id="generateSetupTeardown" checked> Generate Setup/Teardown</label>
-                        <label><input type="checkbox" id="includeAuth"> Include Authentication</label>
-                    </div>
-                    <div style="margin-top: 15px;">
-                        <label>Response Timeout (ms):</label>
-                        <input type="number" id="timeout" class="form-control" value="5000">
-                    </div>
-                </div>
-            </div>
-            
-            <div class="button-group">
-                <button class="btn btn-primary" onclick="generateTests()">
-                    <span class="loading" id="testLoading" style="display:none"></span>
-                    <i class="fas fa-code"></i> Generate Tests
-                </button>
-                <button class="btn btn-success" onclick="runTests()">
-                    <span class="loading" id="runTestLoading" style="display:none"></span>
-                    <i class="fas fa-play"></i> Run Tests (Simulation)
-                </button>
-                <button class="btn btn-info" onclick="exportTests()"><i class="fas fa-download"></i> Export Tests</button>
-            </div>
-            
-            <div class="output-section">
-                <div class="output-header">
-                    <h3><i class="fas fa-code"></i> Generated Tests:</h3>
-                    <button class="btn btn-secondary" onclick="copyTestCode()"><i class="fas fa-copy"></i> Copy Code</button>
-                </div>
-                <div id="testResult" class="output-area">Generated tests will appear here...</div>
-                
-                <div class="output-section">
-                    <div class="output-header">
-                        <h3><i class="fas fa-clipboard-list"></i> Test Results:</h3>
-                        <button class="btn btn-secondary" onclick="rerunTests()"><i class="fas fa-redo"></i> Rerun Tests</button>
-                    </div>
-                    <div id="testOutput" class="output-area">Test results will appear here...</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- JSON Query Tab -->
+        <!-- Data Query Tab -->
         <div id="query" class="tab-content">
             <div class="query-section">
                 <div class="json-input">
-                    <label for="queryJson"><i class="fas fa-code"></i> JSON Input:</label>
-                    <textarea id="queryJson" class="json-textarea" placeholder="Paste your JSON here to query...">{
+                    <div class="input-type-selector">
+                        <button class="type-btn active" onclick="setQueryInputType('json')">JSON</button>
+                        <button class="type-btn" onclick="setQueryInputType('xml')">XML</button>
+                        <button class="type-btn" onclick="setQueryInputType('html')">HTML</button>
+                    </div>
+                    <label for="queryJson"><i class="fas fa-code"></i> Data Input:</label>
+                    <textarea id="queryJson" class="json-textarea" placeholder="Paste your JSON, XML or HTML here...">{
   "employees": [
     {
       "id": 101,
@@ -1057,38 +1114,39 @@
                 <div class="query-input">
                     <label for="queryExpression"><i class="fas fa-terminal"></i> Query Expression:</label>
                     <div class="json-finder">
-                        <input type="text" id="queryExpression" class="form-control" placeholder="Enter JSONPath expression..." value="$.employees[?(@.active)].name">
+                        <input type="text" id="queryExpression" class="form-control" placeholder="Enter query expression..." value="$.employees[?(@.active)].name">
                         <button class="btn btn-primary" onclick="executeQuery()"><i class="fas fa-play"></i> Execute</button>
                     </div>
                     
                     <div class="path-options" style="margin: 25px 0;">
-                        <button class="path-option-btn active" onclick="setQueryType('jsonpath')"><i class="fas fa-bolt"></i> JSONPath</button>
-                        <button class="path-option-btn" onclick="setQueryType('jmespath')"><i class="fab fa-python"></i> JMESPath</button>
-                        <button class="path-option-btn" onclick="setQueryType('jq')"><i class="fas fa-terminal"></i> jq</button>
-                        <button class="path-option-btn" onclick="setQueryType('custom')"><i class="fas fa-code"></i> Custom</button>
+                        <button class="path-option-btn active path" onclick="setQueryType('jsonpath')"><i class="fas fa-bolt"></i> JSONPath</button>
+                        <button class="path-option-btn xml" onclick="setQueryType('xpath')"><i class="fas fa-sitemap"></i> XPath</button>
+                        <button class="path-option-btn html" onclick="setQueryType('css')"><i class="fas fa-tag"></i> CSS Selectors</button>
                     </div>
                     
-    <div class="feature-card">
-    <h3><i class="fas fa-lightbulb"></i> Query Examples</h3>
-    <div style="margin-top: 20px;">
-        <div class="result-item" onclick="setQuery('$.employees[*].name')">
-            <code>$.employees[*].name</code> - All employee names
-        </div>
-        <div class="result-item" onclick="setQuery('$.employees[?(@.position == &quot;Developer&quot;)]')">
-            <code>$.employees[?(@.position == "Developer")]</code> - All developers
-        </div>
-        <div class="result-item" onclick="setQuery('$.employees[?(@.active)].contact.email')">
-            <code>$.employees[?(@.active)].contact.email</code> - Active employee emails
-        </div>
-        <div class="result-item" onclick="setQuery('$.employees[0]')">
-            <code>$.employees[0]</code> - First employee
-        </div>
-        <div class="result-item" onclick="setQuery('$..email')">
-            <code>$..email</code> - All email addresses
-        </div>
-    </div>
-</div>
-
+                    <div class="feature-card">
+                        <h3><i class="fas fa-lightbulb"></i> Query Examples</h3>
+                        <div style="margin-top: 20px;">
+                            <div class="result-item" onclick="setQuery('$.employees[*].name')">
+                                <code>$.employees[*].name</code> - All employee names <span class="data-type-badge path-badge">JSON</span>
+                            </div>
+                            <div class="result-item" onclick="setQuery('$..email')">
+                                <code>$..email</code> - All email addresses <span class="data-type-badge path-badge">JSON</span>
+                            </div>
+                            <div class="result-item" onclick="setQuery('$.employees[?(@.position == \'Developer\')]')">
+                                <code>$.employees[?(@.position == "Developer")]</code> - All developers <span class="data-type-badge path-badge">JSON</span>
+                            </div>
+                            <div class="result-item" onclick="setQuery('$.employees[?(@.active)].projects[*].name')">
+                                <code>$.employees[?(@.active)].projects[*].name</code> - Projects of active employees <span class="data-type-badge path-badge">JSON</span>
+                            </div>
+                            <div class="result-item" onclick="setQuery('$.employees.length')">
+                                <code>$.employees.length</code> - Count of employees <span class="data-type-badge path-badge">JSON</span>
+                            </div>
+                            <div class="result-item" onclick="setQuery('$.employees[0:2]')">
+                                <code>$.employees[0:2]</code> - First two employees <span class="data-type-badge path-badge">JSON</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             
@@ -1097,152 +1155,157 @@
                     <h3><i class="fas fa-list"></i> Query Results:</h3>
                     <div>
                         <span><i class="fas fa-database"></i> <span id="resultCount">0</span> results</span>
+                        <button class="btn btn-secondary" onclick="copyQueryResults()"><i class="fas fa-copy"></i> Copy Results</button>
                     </div>
                 </div>
-                <div id="queryResults" class="output-area">Results will appear here...</div>
+                <div id="queryResults" class="query-results">Results will appear here...</div>
             </div>
         </div>
 
-        <!-- Visualization Tab -->
-        <div id="visual" class="tab-content">
+        <!-- Converter Tab -->
+        <div id="converter" class="tab-content">
             <div class="single-json-section">
-                <label for="visualJson"><i class="fas fa-code"></i> JSON Input:</label>
-                <textarea id="visualJson" class="json-textarea" placeholder="Paste your JSON here to visualize...">{
-  "name": "Organization",
-  "departments": [
-    {
-      "name": "Engineering",
-      "teams": [
-        {"name": "Frontend", "size": 8},
-        {"name": "Backend", "size": 12},
-        {"name": "DevOps", "size": 5}
-      ]
+                <div class="input-type-selector">
+                    <button class="type-btn active" onclick="setConverterInputType('json')">JSON</button>
+                    <button class="type-btn" onclick="setConverterInputType('xml')">XML</button>
+                    <button class="type-btn" onclick="setConverterInputType('html')">HTML</button>
+                </div>
+                <label for="converterInput"><i class="fas fa-code"></i> Input Data:</label>
+                <textarea id="converterInput" class="json-textarea" placeholder="Paste data to convert...">{
+  "product": {
+    "id": "P001",
+    "name": "Smartphone",
+    "specs": {
+      "display": "6.5\" AMOLED",
+      "camera": "48MP + 12MP",
+      "battery": "5000mAh"
     },
-    {
-      "name": "Marketing",
-      "teams": [
-        {"name": "Digital", "size": 6},
-        {"name": "Content", "size": 4}
-      ]
-    }
-  ],
-  "locations": ["New York", "San Francisco", "London"],
-  "stats": {
-    "employees": 35,
-    "revenue": 2500000,
-    "projects": 18
+    "price": 599.99,
+    "inStock": true,
+    "colors": ["Black", "Blue", "Silver"]
   }
 }</textarea>
             </div>
             
-            <div class="path-options">
-                <button class="path-option-btn active"><i class="fas fa-tree"></i> Tree View</button>
-                <button class="path-option-btn"><i class="fas fa-project-diagram"></i> Graph View</button>
-                <button class="path-option-btn"><i class="fas fa-sitemap"></i> Hierarchy</button>
-                <button class="path-option-btn"><i class="fas fa-chart-bar"></i> Statistics</button>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3><i class="fas fa-exchange-alt"></i> Conversion Options</h3>
+                    <div class="checkbox-group">
+                        <label><input type="checkbox" id="prettyPrint" checked> Pretty Print Output</label>
+                        <label><input type="checkbox" id="includeAttributes"> Include Attributes</label>
+                        <label><input type="checkbox" id="preserveWhitespace"> Preserve Whitespace</label>
+                        <label><input type="checkbox" id="generateComments"> Generate Comments</label>
+                    </div>
+                    <div style="margin-top: 15px;">
+                        <label>Output Format:</label>
+                        <select id="outputFormat" class="form-control">
+                            <option value="json">JSON</option>
+                            <option value="xml">XML</option>
+                            <option value="html">HTML</option>
+                            <option value="yaml">YAML</option>
+                            <option value="csv">CSV</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <h3><i class="fas fa-history"></i> Recent Conversions</h3>
+                    <div class="history-panel">
+                        <div class="history-item" onclick="loadConversionExample('jsonToXml')">
+                            <div><i class="fas fa-exchange-alt"></i> JSON to XML Example</div>
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+                        <div class="history-item" onclick="loadConversionExample('htmlToJson')">
+                            <div><i class="fas fa-exchange-alt"></i> HTML to JSON Example</div>
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+                        <div class="history-item" onclick="loadConversionExample('xmlToJson')">
+                            <div><i class="fas fa-exchange-alt"></i> XML to JSON Example</div>
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+                    </div>
+                </div>
             </div>
             
             <div class="button-group">
-                <button class="btn btn-primary" onclick="visualizeJson()"><i class="fas fa-eye"></i> Visualize</button>
-                <button class="btn btn-success" onclick="exportVisualization()"><i class="fas fa-download"></i> Export as Image</button>
+                <button class="btn btn-primary" onclick="convertData()">
+                    <span class="loading" id="convertLoading" style="display:none"></span>
+                    <i class="fas fa-exchange-alt"></i> Convert Data
+                </button>
+                <button class="btn btn-success" onclick="downloadConverted()">
+                    <i class="fas fa-download"></i> Download Converted
+                </button>
             </div>
             
-            <div class="visual-canvas">
-                <i class="fas fa-project-diagram" style="font-size: 64px; color: #cbd5e0; margin-right: 20px;"></i>
-                JSON Structure Visualization
-            </div>
-            
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <i class="fas fa-file-code" style="font-size: 2.5em; color: #4361ee;"></i>
-                    <div class="stat-value">27</div>
-                    <div class="stat-label">Processed Files</div>
+            <div class="output-section">
+                <div class="output-header">
+                    <h3><i class="fas fa-file-code"></i> Converted Output:</h3>
+                    <button class="btn btn-secondary" onclick="copyConverted()"><i class="fas fa-copy"></i> Copy Output</button>
                 </div>
-                <div class="stat-card">
-                    <i class="fas fa-bolt" style="font-size: 2.5em; color: #f59e0b;"></i>
-                    <div class="stat-value">142</div>
-                    <div class="stat-label">Operations</div>
-                </div>
-                <div class="stat-card">
-                    <i class="fas fa-database" style="font-size: 2.5em; color: #10b981;"></i>
-                    <div class="stat-value">5.8k</div>
-                    <div class="stat-label">JSON Elements</div>
-                </div>
+                <div id="convertedOutput" class="output-area">Converted data will appear here...</div>
             </div>
         </div>
 
-        <!-- Other tabs -->
-        <div id="compare" class="tab-content">
-            <h2><i class="fas fa-exchange-alt"></i> JSON Comparison Tool</h2>
-            <div class="json-section">
-                <div class="json-input">
-                    <label for="compareJson1"><i class="fas fa-code"></i> JSON 1:</label>
-                    <textarea id="compareJson1" class="json-textarea">{
-  "name": "John",
-  "age": 30,
-  "city": "New York",
-  "hobbies": ["reading", "hiking", "gaming"]
-}</textarea>
-                </div>
-                <div class="json-input">
-                    <label for="compareJson2"><i class="fas fa-code"></i> JSON 2:</label>
-                    <textarea id="compareJson2" class="json-textarea">{
-  "name": "John",
-  "age": 31,
-  "city": "New York",
-  "hobbies": ["reading", "traveling", "gaming"]
-}</textarea>
-                </div>
-            </div>
-            <div class="button-group">
-                <button class="btn btn-primary" onclick="compareJson()">
-                    <i class="fas fa-exchange-alt"></i> Compare JSON
-                </button>
-            </div>
-            <div class="output-section">
-                <h3><i class="fas fa-clipboard-list"></i> Comparison Results:</h3>
-                <div id="compareResult" class="output-area">Comparison results will appear here...</div>
-            </div>
-        </div>
-        
-        <div id="formatter" class="tab-content">
-            <h2><i class="fas fa-magic"></i> JSON Formatter</h2>
+        <!-- Visualize Tab -->
+        <div id="visualize" class="tab-content">
             <div class="single-json-section">
-                <label for="formatJson"><i class="fas fa-code"></i> JSON Input:</label>
-                <textarea id="formatJson" class="json-textarea">{"name":"John","age":30,"cars":["Ford","BMW","Fiat"],"address":{"street":"123 Main","city":"New York"}}</textarea>
-            </div>
-            <div class="button-group">
-                <button class="btn btn-primary" onclick="formatJson()">
-                    <i class="fas fa-align-left"></i> Format JSON
-                </button>
-                <button class="btn btn-info" onclick="minifyJson()">
-                    <i class="fas fa-compress-arrows-alt"></i> Minify JSON
-                </button>
-            </div>
-            <div class="output-section">
-                <h3><i class="fas fa-file-code"></i> Formatted JSON:</h3>
-                <div id="formatResult" class="output-area">Formatted JSON will appear here...</div>
-            </div>
-        </div>
-        
-        <div id="validator" class="tab-content">
-            <h2><i class="fas fa-check-circle"></i> JSON Validator</h2>
-            <div class="single-json-section">
-                <label for="validateJson"><i class="fas fa-code"></i> JSON Input:</label>
-                <textarea id="validateJson" class="json-textarea">{
-  "name": "John",
-  "age": 30,
-  "city": "New York"
+                <label for="visualizeJson"><i class="fas fa-code"></i> Data Input:</label>
+                <textarea id="visualizeJson" class="json-textarea" placeholder="Paste your JSON data here...">{
+  "organization": {
+    "name": "TechCorp",
+    "departments": [
+      {
+        "name": "Engineering",
+        "teams": [
+          {
+            "name": "Frontend",
+            "members": 8,
+            "skills": ["JavaScript", "React", "CSS"]
+          },
+          {
+            "name": "Backend",
+            "members": 10,
+            "skills": ["Java", "Python", "SQL"]
+          }
+        ]
+      },
+      {
+        "name": "Design",
+        "teams": [
+          {
+            "name": "UI/UX",
+            "members": 6,
+            "skills": ["Figma", "Sketch", "Adobe XD"]
+          }
+        ]
+      }
+    ],
+    "employees": 24,
+    "locations": ["New York", "San Francisco", "Berlin"]
+  }
 }</textarea>
             </div>
+            
             <div class="button-group">
-                <button class="btn btn-primary" onclick="validateJson()">
-                    <i class="fas fa-check"></i> Validate JSON
+                <button class="btn btn-path" onclick="visualizeData()">
+                    <i class="fas fa-project-diagram"></i> Visualize Data
+                </button>
+                <button class="btn btn-info" onclick="generateTree()">
+                    <i class="fas fa-tree"></i> Generate Tree
+                </button>
+                <button class="btn btn-warning" onclick="generateChart()">
+                    <i class="fas fa-chart-bar"></i> Generate Chart
                 </button>
             </div>
+            
+            <div class="visual-canvas" id="visualizationCanvas">
+                <i class="fas fa-project-diagram"></i> Visualization will appear here
+            </div>
+            
             <div class="output-section">
-                <h3><i class="fas fa-clipboard-check"></i> Validation Results:</h3>
-                <div id="validateResult" class="output-area">Validation results will appear here...</div>
+                <div class="output-header">
+                    <h3><i class="fas fa-list"></i> Data Structure:</h3>
+                </div>
+                <div id="structureResult" class="output-area">Data structure will be displayed here...</div>
             </div>
         </div>
     </div>
@@ -1255,10 +1318,11 @@
         // Global variables
         let currentTab = 'paths';
         let currentPathType = 'jsonpath';
-        let currentFramework = 'restassured';
         let currentQueryType = 'jsonpath';
         let jsonData = null;
-        let selectedElement = null;
+        let inputType = 'json';
+        let queryInputType = 'json';
+        let converterInputType = 'json';
         
         // Initialize the app
         window.onload = function() {
@@ -1269,45 +1333,85 @@
                 }
             });
             
-            // Load sample data
-            document.getElementById('pathJson').value = JSON.stringify({
-                "store": {
-                    "book": [
+            // Add some example data
+            document.getElementById('visualizeJson').value = JSON.stringify({
+                "organization": {
+                    "name": "TechCorp",
+                    "departments": [
                         {
-                            "category": "reference",
-                            "author": "Nigel Rees",
-                            "title": "Sayings of the Century",
-                            "price": 8.95,
-                            "inStock": true,
-                            "dimensions": {"length": 20, "width": 15, "units": "cm"}
+                            "name": "Engineering",
+                            "teams": [
+                                {
+                                    "name": "Frontend",
+                                    "members": 8,
+                                    "skills": ["JavaScript", "React", "CSS"]
+                                },
+                                {
+                                    "name": "Backend",
+                                    "members": 10,
+                                    "skills": ["Java", "Python", "SQL"]
+                                }
+                            ]
                         },
                         {
-                            "category": "fiction",
-                            "author": "Evelyn Waugh",
-                            "title": "Sword of Honour",
-                            "price": 12.99,
-                            "inStock": false,
-                            "dimensions": {"length": 22, "width": 18, "units": "cm"}
+                            "name": "Design",
+                            "teams": [
+                                {
+                                    "name": "UI/UX",
+                                    "members": 6,
+                                    "skills": ["Figma", "Sketch", "Adobe XD"]
+                                }
+                            ]
                         }
                     ],
-                    "bicycle": {
-                        "color": "red",
-                        "price": 19.95,
-                        "inStock": true,
-                        "specs": ["aluminum", "carbon", "steel"]
-                    }
-                },
-                "owner": {
-                    "name": "John Doe",
-                    "contact": {
-                        "email": "john@example.com",
-                        "phone": "+1-555-1234"
-                    }
-                },
-                "active": true,
-                "lastUpdated": "2023-05-15T12:30:45Z"
+                    "employees": 24,
+                    "locations": ["New York", "San Francisco", "Berlin"]
+                }
             }, null, 2);
         };
+        
+        // Input type switching
+        function setInputType(type) {
+            inputType = type;
+            document.querySelectorAll('.input-type-selector .type-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Update placeholder text
+            const placeholder = type === 'json' ? 'Paste your JSON here...' : 
+                               type === 'xml' ? 'Paste your XML here...' : 
+                               'Paste your HTML here...';
+            document.getElementById('pathJson').placeholder = placeholder;
+        }
+        
+        function setQueryInputType(type) {
+            queryInputType = type;
+            document.querySelectorAll('#query .input-type-selector .type-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Update placeholder text
+            const placeholder = type === 'json' ? 'Paste your JSON here...' : 
+                               type === 'xml' ? 'Paste your XML here...' : 
+                               'Paste your HTML here...';
+            document.getElementById('queryJson').placeholder = placeholder;
+        }
+        
+        function setConverterInputType(type) {
+            converterInputType = type;
+            document.querySelectorAll('#converter .input-type-selector .type-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Update placeholder text
+            const placeholder = type === 'json' ? 'Paste data to convert...' : 
+                               type === 'xml' ? 'Paste XML to convert...' : 
+                               'Paste HTML to convert...';
+            document.getElementById('converterInput').placeholder = placeholder;
+        }
 
         // Tab switching functionality
         function switchTab(tabName) {
@@ -1319,15 +1423,6 @@
                 tab.classList.remove('active');
             });
             document.getElementById(tabName).classList.add('active');
-            event.target.classList.add('active');
-        }
-        
-        // Framework switching
-        function switchFramework(framework) {
-            currentFramework = framework;
-            document.querySelectorAll('.framework-tab').forEach(tab => {
-                tab.classList.remove('active');
-            });
             event.target.classList.add('active');
         }
         
@@ -1387,17 +1482,22 @@
         
         // Path extraction functionality
         function extractPaths() {
-            const jsonInput = document.getElementById('pathJson').value.trim();
+            const input = document.getElementById('pathJson').value.trim();
             const resultDiv = document.getElementById('pathsResult');
             const loadingEl = document.getElementById('extractLoading');
             
-            if (!jsonInput) {
-                showAlert('Please enter JSON input', 'error');
+            if (!input) {
+                showAlert('Please enter input data', 'error');
                 return;
             }
             
-            jsonData = parseJson(jsonInput, 'Invalid JSON format');
-            if (!jsonData) return;
+            if (inputType === 'json') {
+                jsonData = parseJson(input, 'Invalid JSON format');
+                if (!jsonData) return;
+            } else {
+                // For XML/HTML, we'll convert to JSON first
+                jsonData = convertXmlToJson(input);
+            }
             
             try {
                 loadingEl.style.display = 'inline-block';
@@ -1409,10 +1509,15 @@
                     
                     const paths = extractAllPaths(jsonData, '', includeValues, showDataTypes, includeArrayIndices);
                     
-                    let result = '=== All JSON Paths ===\n\n';
+                    let result = '=== All Data Paths ===\n\n';
                     paths.forEach(path => {
                         result += `• ${path}\n`;
                     });
+                    
+                    // Update stats
+                    document.getElementById('pathCount').textContent = paths.length;
+                    document.getElementById('depthCount').textContent = calculateMaxDepth(jsonData);
+                    document.getElementById('nodeCount').textContent = countNodes(jsonData);
                     
                     resultDiv.textContent = result;
                     loadingEl.style.display = 'none';
@@ -1488,34 +1593,94 @@
             return typeof value;
         }
         
-        // JSONPath generation
+        // Calculate max depth of the object
+        function calculateMaxDepth(obj) {
+            if (typeof obj !== 'object' || obj === null) {
+                return 0;
+            }
+            
+            let maxDepth = 0;
+            for (const key in obj) {
+                if (obj.hasOwnProperty(key)) {
+                    const depth = calculateMaxDepth(obj[key]) + 1;
+                    if (depth > maxDepth) {
+                        maxDepth = depth;
+                    }
+                }
+            }
+            
+            return maxDepth;
+        }
+        
+        // Count total nodes in the object
+        function countNodes(obj) {
+            if (typeof obj !== 'object' || obj === null) {
+                return 1;
+            }
+            
+            let count = 1;
+            for (const key in obj) {
+                if (obj.hasOwnProperty(key)) {
+                    count += countNodes(obj[key]);
+                }
+            }
+            
+            return count;
+        }
+        
+        // Generate JSONPath expressions
         function generateJSONPath() {
-            const jsonInput = document.getElementById('pathJson').value.trim();
+            const input = document.getElementById('pathJson').value.trim();
             const resultDiv = document.getElementById('pathsResult');
             const loadingEl = document.getElementById('jsonpathLoading');
             
-            if (!jsonInput) {
-                showAlert('Please enter JSON input', 'error');
+            if (!input) {
+                showAlert('Please enter input data', 'error');
                 return;
             }
-            
-            jsonData = parseJson(jsonInput, 'Invalid JSON format');
-            if (!jsonData) return;
             
             try {
                 loadingEl.style.display = 'inline-block';
                 
                 setTimeout(() => {
-                    const useWildcards = document.getElementById('wildcardArrays').checked;
-                    const filterExpressions = document.getElementById('filterExpressions').checked;
-                    const pathFormat = document.getElementById('pathFormat').value;
+                    let jsonData;
+                    if (inputType === 'json') {
+                        jsonData = parseJson(input, 'Invalid JSON format');
+                    } else {
+                        jsonData = convertXmlToJson(input);
+                    }
                     
-                    const jsonPaths = generateJSONPathExpressions(jsonData, '$', useWildcards, filterExpressions, pathFormat);
+                    if (!jsonData) return;
                     
+                    // Generate JSONPath expressions
                     let result = '=== JSONPath Expressions ===\n\n';
-                    jsonPaths.forEach(path => {
-                        result += `• ${path}\n`;
+                    result += '• $ - Root element\n';
+                    
+                    // Generate paths based on actual data structure
+                    const paths = extractAllPaths(jsonData, '', false, false, false);
+                    
+                    // Create a set of unique paths without array indices
+                    const uniquePaths = new Set();
+                    
+                    paths.forEach(path => {
+                        // Remove array indices
+                        const cleanPath = path.replace(/\[\d+\]/g, '[*]');
+                        uniquePaths.add(cleanPath);
                     });
+                    
+                    // Convert set to array and sort
+                    const sortedPaths = Array.from(uniquePaths).sort();
+                    
+                    // Add to result
+                    sortedPaths.forEach(path => {
+                        result += `• ${path} - Path to ${path.split('.').pop()}\n`;
+                    });
+                    
+                    // Special expressions
+                    result += '\n=== Special Expressions ===\n';
+                    result += '• $..* - All elements\n';
+                    result += '• $..book[?(@.price<10)] - Books cheaper than 10\n';
+                    result += '• $..book[-1:] - Last book in array\n';
                     
                     resultDiv.textContent = result;
                     loadingEl.style.display = 'none';
@@ -1527,424 +1692,15 @@
             }
         }
         
-        function generateJSONPathExpressions(obj, path, useWildcards, filterExpressions, pathFormat) {
-            const paths = [];
-            
-            if (Array.isArray(obj)) {
-                const newPath = useWildcards ? `${path}[*]` : `${path}[0]`;
-                paths.push(formatPath(newPath, pathFormat));
-                
-                if (obj.length > 0) {
-                    paths.push(...generateJSONPathExpressions(obj[0], newPath, useWildcards, filterExpressions, pathFormat));
-                }
-            } else if (typeof obj === 'object' && obj !== null) {
-                Object.keys(obj).forEach(key => {
-                    let newPath;
-                    if (pathFormat === 'Bracket Notation') {
-                        newPath = `${path}['${key}']`;
-                    } else {
-                        newPath = `${path}.${key}`;
-                    }
-                    
-                    if (filterExpressions && typeof obj[key] === 'object' && obj[key] !== null) {
-                        // Add filter expression for objects
-                        paths.push(`${newPath}[?(@.property == 'value')]`);
-                    }
-                    
-                    paths.push(newPath);
-                    
-                    if (typeof obj[key] === 'object' && obj[key] !== null) {
-                        paths.push(...generateJSONPathExpressions(obj[key], newPath, useWildcards, filterExpressions, pathFormat));
-                    }
-                });
-            }
-            
-            return paths;
-        }
-        
-        function formatPath(path, format) {
-            if (format === 'Bracket Notation') {
-                return path.replace(/\.([a-zA-Z_$][a-zA-Z0-9_$]*)/g, "['$1']");
-            }
-            return path;
-        }
-        
-        // Test assertions generation
-        function generateTestAssertions() {
-            const jsonInput = document.getElementById('pathJson').value.trim();
-            const resultDiv = document.getElementById('pathsResult');
-            const loadingEl = document.getElementById('assertionLoading');
-            
-            if (!jsonInput) {
-                showAlert('Please enter JSON input', 'error');
-                return;
-            }
-            
-            jsonData = parseJson(jsonInput, 'Invalid JSON format');
-            if (!jsonData) return;
-            
-            try {
-                loadingEl.style.display = 'inline-block';
-                
-                setTimeout(() => {
-                    const assertions = generateAssertions(jsonData);
-                    
-                    let result = '=== Test Assertions ===\n\n';
-                    assertions.forEach(assertion => {
-                        result += `# ${assertion.description}\n`;
-                        result += `${assertion.code}\n\n`;
-                    });
-                    
-                    resultDiv.textContent = result;
-                    loadingEl.style.display = 'none';
-                    showAlert('Test assertions generated!', 'success');
-                }, 500);
-            } catch (error) {
-                loadingEl.style.display = 'none';
-                showAlert('Error generating assertions: ' + error.message, 'error');
-            }
-        }
-        
-        function generateAssertions(obj) {
-            const assertions = [];
-            const paths = extractAllPaths(obj, '', true, true, true);
-            
-            paths.forEach(pathStr => {
-                const [path] = pathStr.split(':');
-                const value = getValueByPath(obj, path);
-                const type = value === null ? 'null' : Array.isArray(value) ? 'array' : typeof value;
-                const description = `Assert value at path: ${path}`;
-                
-                let code = '';
-                
-                // RestAssured
-                code += `// RestAssured\n`;
-                code += `response.then()\n`;
-                code += `    .body("${path}", ${getMatcher(value)});\n\n`;
-                
-                // TestNG
-                code += `// TestNG\n`;
-                code += `JsonPath jsonPath = new JsonPath(response.asString());\n`;
-                code += `Assert.assertEquals(jsonPath.get("${path}"), ${JSON.stringify(value)});\n\n`;
-                
-                // Karate
-                code += `// Karate\n`;
-                code += `match response.${path} == ${JSON.stringify(value)}\n\n`;
-                
-                assertions.push({
-                    description,
-                    code
-                });
-            });
-            
-            return assertions;
-        }
-        
-        function getValueByPath(obj, path) {
-            const parts = path.replace('$', '').split(/[\.\[\]']+/).filter(p => p !== '');
-            let current = obj;
-            
-            for (const part of parts) {
-                if (current === null || current === undefined) return undefined;
-                if (Array.isArray(current)) {
-                    current = current[parseInt(part)];
-                } else {
-                    current = current[part];
-                }
-            }
-            
-            return current;
-        }
-        
-        function getMatcher(value) {
-            if (typeof value === 'string') {
-                return `equalTo("${value}")`;
-            } else if (typeof value === 'number') {
-                return `equalTo(${value})`;
-            } else if (typeof value === 'boolean') {
-                return `equalTo(${value})`;
-            } else if (value === null) {
-                return `nullValue()`;
-            } else if (Array.isArray(value)) {
-                return `hasSize(${value.length})`;
-            } else {
-                return `notNullValue()`;
-            }
-        }
-        
-        // Test generation
-        function generateTests() {
-            const jsonInput = document.getElementById('testJson').value.trim();
-            const resultDiv = document.getElementById('testResult');
-            const loadingEl = document.getElementById('testLoading');
-            const baseUrl = document.getElementById('baseUrl').value;
-            const endpoint = document.getElementById('endpoint').value;
-            const method = document.getElementById('httpMethod').value;
-            const timeout = document.getElementById('timeout').value;
-            
-            if (!jsonInput) {
-                showAlert('Please enter JSON input', 'error');
-                return;
-            }
-            
-            jsonData = parseJson(jsonInput, 'Invalid JSON format');
-            if (!jsonData) return;
-            
-            try {
-                loadingEl.style.display = 'inline-block';
-                
-                setTimeout(() => {
-                    let testCode = '';
-                    
-                    switch(currentFramework) {
-                        case 'restassured':
-                            testCode = generateRestAssuredTest(baseUrl, endpoint, method, jsonData, timeout);
-                            break;
-                        case 'testng':
-                            testCode = generateTestNGTest(baseUrl, endpoint, method, jsonData, timeout);
-                            break;
-                        case 'karate':
-                            testCode = generateKarateTest(baseUrl, endpoint, method, jsonData);
-                            break;
-                        case 'bdd':
-                            testCode = generateBDDTest(baseUrl, endpoint, method, jsonData);
-                            break;
-                        case 'pojo':
-                            testCode = generatePojoTest(baseUrl, endpoint, method, jsonData);
-                            break;
-                        case 'jest':
-                            testCode = generateJestTest(baseUrl, endpoint, method, jsonData);
-                            break;
-                        default:
-                            testCode = generateRestAssuredTest(baseUrl, endpoint, method, jsonData, timeout);
-                    }
-                    
-                    resultDiv.textContent = testCode;
-                    loadingEl.style.display = 'none';
-                    showAlert('Tests generated successfully!', 'success');
-                }, 500);
-            } catch (error) {
-                loadingEl.style.display = 'none';
-                showAlert('Error generating tests: ' + error.message, 'error');
-            }
-        }
-        
-        function generateRestAssuredTest(baseUrl, endpoint, method, response, timeout) {
-            let code = `import io.restassured.RestAssured;\n`;
-            code += `import io.restassured.response.Response;\n`;
-            code += `import org.junit.jupiter.api.Test;\n\n`;
-            code += `import static io.restassured.RestAssured.*;\n`;
-            code += `import static org.hamcrest.Matchers.*;\n\n`;
-            code += `public class ApiTest {\n\n`;
-            code += `    @Test\n`;
-            code += `    public void testEndpoint() {\n`;
-            code += `        RestAssured.baseURI = "${baseUrl}";\n`;
-            code += `        RestAssured.config().getConfig().timeout = ${timeout};\n\n`;
-            code += `        Response response = given()\n`;
-            code += `            .header("Content-Type", "application/json")\n`;
-            code += `        .when()\n`;
-            code += `            .${method.toLowerCase()}("${endpoint}");\n\n`;
-            code += `        // Assert status code\n`;
-            code += `        response.then().statusCode(200);\n\n`;
-            code += `        // Assert response body\n`;
-            
-            const paths = extractAllPaths(response, '$', true, true, true);
-            paths.forEach(pathStr => {
-                const [path] = pathStr.split(':');
-                const value = getValueByPath(response, path);
-                code += `        response.then().body("${path}", ${getMatcher(value)});\n`;
-            });
-            
-            code += `    }\n`;
-            code += `}`;
-            
-            return code;
-        }
-        
-        function generateTestNGTest(baseUrl, endpoint, method, response, timeout) {
-            let code = `import io.restassured.RestAssured;\n`;
-            code += `import io.restassured.response.Response;\n`;
-            code += `import io.restassured.path.json.JsonPath;\n`;
-            code += `import org.testng.annotations.Test;\n`;
-            code += `import org.testng.Assert;\n\n`;
-            code += `public class ApiTestNGTest {\n\n`;
-            code += `    @Test\n`;
-            code += `    public void testEndpoint() {\n`;
-            code += `        RestAssured.baseURI = "${baseUrl}";\n`;
-            code += `        RestAssured.config().getConfig().timeout = ${timeout};\n\n`;
-            code += `        Response response = RestAssured.given()\n`;
-            code += `            .header("Content-Type", "application/json")\n`;
-            code += `        .when()\n`;
-            code += `            .${method.toLowerCase()}("${endpoint}");\n\n`;
-            code += `        // Assert status code\n`;
-            code += `        Assert.assertEquals(response.getStatusCode(), 200);\n\n`;
-            code += `        // Parse response\n`;
-            code += `        JsonPath jsonPath = response.jsonPath();\n\n`;
-            code += `        // Assert response body\n`;
-            
-            const paths = extractAllPaths(response, '$', true, true, true);
-            paths.forEach(pathStr => {
-                const [path] = pathStr.split(':');
-                const value = getValueByPath(response, path);
-                if (typeof value === 'string') {
-                    code += `        Assert.assertEquals(jsonPath.get("${path}"), "${value}");\n`;
-                } else {
-                    code += `        Assert.assertEquals(jsonPath.get("${path}"), ${JSON.stringify(value)});\n`;
-                }
-            });
-            
-            code += `    }\n`;
-            code += `}`;
-            
-            return code;
-        }
-        
-        function generateKarateTest(baseUrl, endpoint, method, response) {
-            let code = `Feature: API Test\n\n`;
-            code += `Scenario: Test ${endpoint} endpoint\n`;
-            code += `    Given url '${baseUrl}'\n`;
-            code += `    When ${method.toLowerCase()} '${endpoint}'\n`;
-            code += `    Then status 200\n`;
-            
-            const paths = extractAllPaths(response, '$', true, true, true);
-            paths.forEach(pathStr => {
-                const [path, valuePart] = pathStr.split(':');
-                const value = valuePart ? valuePart.split('(')[0].trim() : '';
-                code += `    And match response.${path} == ${value}\n`;
-            });
-            
-            return code;
-        }
-        
-        // POJO generation
-        function generatePojos() {
-            const jsonInput = document.getElementById('pathJson').value.trim();
-            const resultDiv = document.getElementById('pathsResult');
-            const loadingEl = document.getElementById('pojoLoading');
-            
-            if (!jsonInput) {
-                showAlert('Please enter JSON input', 'error');
-                return;
-            }
-            
-            jsonData = parseJson(jsonInput, 'Invalid JSON format');
-            if (!jsonData) return;
-            
-            try {
-                loadingEl.style.display = 'inline-block';
-                
-                setTimeout(() => {
-                    const pojos = generatePojoClasses(jsonData);
-                    
-                    let result = '=== Generated POJOs ===\n\n';
-                    pojos.forEach(pojo => {
-                        result += `${pojo}\n\n`;
-                    });
-                    
-                    resultDiv.textContent = result;
-                    loadingEl.style.display = 'none';
-                    showAlert('POJO classes generated!', 'success');
-                }, 500);
-            } catch (error) {
-                loadingEl.style.display = 'none';
-                showAlert('Error generating POJOs: ' + error.message, 'error');
-            }
-        }
-        
-        function generatePojoClasses(obj, className = 'RootClass') {
-            let pojo = `public class ${className} {\n`;
-            const fields = [];
-            const imports = new Set();
-            
-            if (typeof obj === 'object' && obj !== null) {
-                for (const key in obj) {
-                    if (obj.hasOwnProperty(key)) {
-                        const value = obj[key];
-                        const type = getJavaType(value);
-                        const fieldName = key.replace(/[^a-zA-Z0-9]/g, '_');
-                        
-                        // Add imports for complex types
-                        if (type.includes('List')) {
-                            imports.add('import java.util.List;');
-                        }
-                        if (type.includes('Map')) {
-                            imports.add('import java.util.Map;');
-                        }
-                        
-                        fields.push(`    private ${type} ${fieldName};`);
-                        
-                        // Handle nested objects
-                        if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
-                            const nestedClassName = capitalize(key);
-                            const nestedClass = generatePojoClasses(value, nestedClassName);
-                            pojo = nestedClass + '\n\n' + pojo;
-                        }
-                    }
-                }
-            }
-            
-            // Add getters and setters
-            let gettersSetters = '';
-            for (const key in obj) {
-                if (obj.hasOwnProperty(key)) {
-                    const value = obj[key];
-                    const type = getJavaType(value);
-                    const fieldName = key.replace(/[^a-zA-Z0-9]/g, '_');
-                    const capitalizedField = capitalize(fieldName);
-                    
-                    gettersSetters += `\n    public ${type} get${capitalizedField}() {\n`;
-                    gettersSetters += `        return this.${fieldName};\n`;
-                    gettersSetters += `    }\n\n`;
-                    gettersSetters += `    public void set${capitalizedField}(${type} ${fieldName}) {\n`;
-                    gettersSetters += `        this.${fieldName} = ${fieldName};\n`;
-                    gettersSetters += `    }\n`;
-                }
-            }
-            
-            // Construct final POJO
-            let finalPojo = '';
-            if (imports.size > 0) {
-                finalPojo += Array.from(imports).join('\n') + '\n\n';
-            }
-            finalPojo += pojo;
-            finalPojo += fields.join('\n') + '\n';
-            finalPojo += gettersSetters;
-            finalPojo += '}';
-            
-            return [finalPojo];
-        }
-        
-        function capitalize(str) {
-            return str.charAt(0).toUpperCase() + str.slice(1);
-        }
-        
-        function getJavaType(value) {
-            if (value === null) return 'Object';
-            if (Array.isArray(value)) {
-                if (value.length > 0 && typeof value[0] === 'object') {
-                    return `List<${capitalize(Object.keys(value[0])[0] || 'Object')}>`;
-                }
-                return 'List<Object>';
-            }
-            if (typeof value === 'string') return 'String';
-            if (typeof value === 'number') return Number.isInteger(value) ? 'int' : 'double';
-            if (typeof value === 'boolean') return 'boolean';
-            if (typeof value === 'object') {
-                if (Object.keys(value).length === 0) return 'Map<String, Object>';
-                return capitalize(Object.keys(value)[0] || 'Object');
-            }
-            return 'Object';
-        }
-        
-        // JSON Query execution
+        // Execute JSONPath query
         function executeQuery() {
-            const jsonInput = document.getElementById('queryJson').value.trim();
+            const input = document.getElementById('queryJson').value.trim();
             const query = document.getElementById('queryExpression').value.trim();
-            const resultDiv = document.getElementById('queryResults');
-            const countSpan = document.getElementById('resultCount');
+            const resultsDiv = document.getElementById('queryResults');
+            const resultCount = document.getElementById('resultCount');
             
-            if (!jsonInput) {
-                showAlert('Please enter JSON input', 'error');
+            if (!input) {
+                showAlert('Please enter input data', 'error');
                 return;
             }
             
@@ -1953,224 +1709,401 @@
                 return;
             }
             
-            jsonData = parseJson(jsonInput, 'Invalid JSON format');
+            let jsonData;
+            if (queryInputType === 'json') {
+                jsonData = parseJson(input, 'Invalid JSON format');
+            } else {
+                jsonData = convertXmlToJson(input);
+            }
+            
             if (!jsonData) return;
             
             try {
-                let results;
+                // Execute JSONPath query
+                const results = JSONPath({ path: query, json: jsonData });
                 
-                switch(currentQueryType) {
-                    case 'jsonpath':
-                        results = JSONPath({path: query, json: jsonData});
-                        break;
-                    case 'jmespath':
-                        results = jmespath.search(jsonData, query);
-                        break;
-                    case 'jq':
-                        // jq not supported natively, use JSONPath as fallback
-                        results = JSONPath({path: query, json: jsonData});
-                        break;
-                    default:
-                        results = JSONPath({path: query, json: jsonData});
-                }
-                
-                if (!results || results.length === 0) {
-                    resultDiv.textContent = "No results found for the query.";
+                // Format the results
+                let formattedResults = '';
+                if (results.length === 0) {
+                    formattedResults = '<div class="query-result-item">No results found</div>';
                 } else {
-                    resultDiv.textContent = JSON.stringify(results, null, 2);
+                    formattedResults = results.map((result, index) => {
+                        let content = '';
+                        if (typeof result === 'object' && result !== null) {
+                            content = `<div class="query-result-item"><strong>${index + 1}:</strong> ${JSON.stringify(result, null, 2)}</div>`;
+                        } else {
+                            content = `<div class="query-result-item"><strong>${index + 1}:</strong> ${result}</div>`;
+                        }
+                        return content;
+                    }).join('');
                 }
                 
-                countSpan.textContent = results.length;
-                showAlert('Query executed successfully!', 'success');
+                // Update the results display
+                resultsDiv.innerHTML = formattedResults;
+                resultCount.textContent = results.length;
+                showAlert(`Query executed successfully! Found ${results.length} results`, 'success');
             } catch (error) {
+                resultsDiv.innerHTML = `<div class="alert alert-error"><i class="fas fa-exclamation-triangle"></i> Error executing query: ${error.message}</div>`;
+                resultCount.textContent = '0';
                 showAlert('Error executing query: ' + error.message, 'error');
-                resultDiv.textContent = "Error: " + error.message;
             }
         }
         
+        // Set query from example
         function setQuery(query) {
             document.getElementById('queryExpression').value = query;
         }
         
-        // Simulate test execution
-        function runTests() {
-            const loadingEl = document.getElementById('runTestLoading');
-            const outputDiv = document.getElementById('testOutput');
+        // Copy query results to clipboard
+        function copyQueryResults() {
+            const results = document.getElementById('queryResults').textContent;
+            const textArea = document.createElement('textarea');
+            textArea.value = results;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            showAlert('Query results copied to clipboard!', 'success');
+        }
+        
+        // Data conversion
+        function convertData() {
+            const input = document.getElementById('converterInput').value.trim();
+            const outputDiv = document.getElementById('convertedOutput');
+            const loadingEl = document.getElementById('convertLoading');
+            const outputFormat = document.getElementById('outputFormat').value;
             
-            loadingEl.style.display = 'inline-block';
-            outputDiv.textContent = 'Running tests...';
-            
-            setTimeout(() => {
-                outputDiv.textContent = `Test Results for ${currentFramework.toUpperCase()}:\n\n`;
-                outputDiv.textContent += "✅ Test 1: GET request - PASSED\n";
-                outputDiv.textContent += "✅ Test 2: Status code 200 - PASSED\n";
-                outputDiv.textContent += "✅ Test 3: Response body validation - PASSED\n";
-                outputDiv.textContent += "✅ Test 4: Data type validation - PASSED\n";
-                outputDiv.textContent += "✅ Test 5: Performance check - PASSED\n\n";
-                outputDiv.textContent += "🎉 All tests passed successfully!";
-                
-                loadingEl.style.display = 'none';
-                showAlert('Tests executed successfully!', 'success');
-            }, 1500);
-        }
-        
-        function rerunTests() {
-            document.getElementById('testOutput').textContent = 'Test results will appear here...';
-            runTests();
-        }
-        
-        function exportTests() {
-            showAlert('Tests exported successfully!', 'success');
-        }
-        
-        function copyTestCode() {
-            const testCode = document.getElementById('testResult').textContent;
-            navigator.clipboard.writeText(testCode);
-            showAlert('Test code copied to clipboard!', 'success');
-        }
-        
-        // JSON Comparison
-        function compareJson() {
-            const json1 = document.getElementById('compareJson1').value.trim();
-            const json2 = document.getElementById('compareJson2').value.trim();
-            const resultDiv = document.getElementById('compareResult');
-            
-            if (!json1 || !json2) {
-                showAlert('Please enter both JSON inputs', 'error');
+            if (!input) {
+                showAlert('Please enter input data', 'error');
                 return;
             }
             
-            const obj1 = parseJson(json1, 'Invalid JSON format for first input');
-            const obj2 = parseJson(json2, 'Invalid JSON format for second input');
-            if (!obj1 || !obj2) return;
-            
             try {
-                const diff = findJsonDifferences(obj1, obj2);
+                loadingEl.style.display = 'inline-block';
                 
-                if (diff.length === 0) {
-                    resultDiv.textContent = "✅ The JSON objects are identical!";
-                } else {
-                    let result = "🔍 Found differences:\n\n";
-                    diff.forEach(d => {
-                        result += `- ${d}\n`;
-                    });
-                    resultDiv.textContent = result;
-                }
-                
-                showAlert('Comparison completed!', 'success');
-            } catch (error) {
-                showAlert('Error comparing JSON: ' + error.message, 'error');
-                resultDiv.textContent = "Error: " + error.message;
-            }
-        }
-        
-        function findJsonDifferences(obj1, obj2, path = '') {
-            const differences = [];
-            
-            // Check if both are objects
-            if (typeof obj1 === 'object' && obj1 !== null && typeof obj2 === 'object' && obj2 !== null) {
-                const keys = new Set([...Object.keys(obj1), ...Object.keys(obj2)]);
-                
-                keys.forEach(key => {
-                    const newPath = path ? `${path}.${key}` : key;
+                setTimeout(() => {
+                    let result = '';
                     
-                    if (obj1.hasOwnProperty(key) && !obj2.hasOwnProperty(key)) {
-                        differences.push(`Property '${newPath}' exists in first JSON but missing in second`);
-                    } else if (!obj1.hasOwnProperty(key) && obj2.hasOwnProperty(key)) {
-                        differences.push(`Property '${newPath}' missing in first JSON but exists in second`);
-                    } else {
-                        const val1 = obj1[key];
-                        const val2 = obj2[key];
+                    if (converterInputType === 'json') {
+                        const jsonData = parseJson(input, 'Invalid JSON format');
+                        if (!jsonData) return;
                         
-                        if (typeof val1 !== typeof val2) {
-                            differences.push(`Type mismatch at '${newPath}': ${typeof val1} vs ${typeof val2}`);
-                        } else if (typeof val1 === 'object' && val1 !== null) {
-                            differences.push(...findJsonDifferences(val1, val2, newPath));
-                        } else if (val1 !== val2) {
-                            differences.push(`Value difference at '${newPath}': ${val1} vs ${val2}`);
+                        if (outputFormat === 'xml') {
+                            result = jsonToXml(jsonData);
+                        } else if (outputFormat === 'html') {
+                            result = jsonToHtml(jsonData);
+                        } else if (outputFormat === 'yaml') {
+                            result = jsonToYaml(jsonData);
+                        } else if (outputFormat === 'csv') {
+                            result = jsonToCsv(jsonData);
+                        } else {
+                            result = JSON.stringify(jsonData, null, 2);
+                        }
+                    } else if (converterInputType === 'xml') {
+                        const jsonData = convertXmlToJson(input);
+                        
+                        if (outputFormat === 'json') {
+                            result = JSON.stringify(jsonData, null, 2);
+                        } else if (outputFormat === 'html') {
+                            result = xmlToHtml(input);
+                        } else {
+                            result = input; // Keep as XML
+                        }
+                    } else { // HTML
+                        if (outputFormat === 'json') {
+                            const jsonData = convertHtmlToJson(input);
+                            result = JSON.stringify(jsonData, null, 2);
+                        } else if (outputFormat === 'xml') {
+                            result = htmlToXml(input);
+                        } else {
+                            result = input; // Keep as HTML
                         }
                     }
+                    
+                    outputDiv.textContent = result;
+                    loadingEl.style.display = 'none';
+                    showAlert('Data converted successfully!', 'success');
+                }, 500);
+            } catch (error) {
+                loadingEl.style.display = 'none';
+                showAlert('Error converting data: ' + error.message, 'error');
+            }
+        }
+        
+        // JSON to XML conversion
+        function jsonToXml(obj) {
+            let xml = '';
+            
+            const toXml = (obj, nodeName) => {
+                if (obj === null || obj === undefined) return '';
+                
+                let xml = '';
+                
+                if (Array.isArray(obj)) {
+                    obj.forEach(item => {
+                        xml += toXml(item, nodeName);
+                    });
+                } else if (typeof obj === 'object') {
+                    xml += `<${nodeName}>`;
+                    for (const key in obj) {
+                        if (obj.hasOwnProperty(key)) {
+                            xml += toXml(obj[key], key);
+                        }
+                    }
+                    xml += `</${nodeName}>`;
+                } else {
+                    xml += `<${nodeName}>${obj}</${nodeName}>`;
+                }
+                
+                return xml;
+            };
+            
+            for (const key in obj) {
+                if (obj.hasOwnProperty(key)) {
+                    xml += toXml(obj[key], key);
+                }
+            }
+            
+            return `<?xml version="1.0" encoding="UTF-8"?>\n<root>\n${xml}\n</root>`;
+        }
+        
+        // JSON to HTML conversion
+        function jsonToHtml(obj) {
+            if (typeof obj !== 'object' || obj === null) {
+                return `<div>${obj}</div>`;
+            }
+            
+            let html = '<div class="json-container">';
+            
+            if (Array.isArray(obj)) {
+                html += '<ul>';
+                obj.forEach(item => {
+                    html += `<li>${jsonToHtml(item)}</li>`;
                 });
-            } else if (obj1 !== obj2) {
-                differences.push(`Value difference at root: ${obj1} vs ${obj2}`);
+                html += '</ul>';
+            } else {
+                html += '<dl>';
+                for (const key in obj) {
+                    if (obj.hasOwnProperty(key)) {
+                        html += `<dt>${key}</dt><dd>${jsonToHtml(obj[key])}</dd>`;
+                    }
+                }
+                html += '</dl>';
             }
             
-            return differences;
+            return html + '</div>';
         }
         
-        // JSON Formatting
-        function formatJson() {
-            const jsonInput = document.getElementById('formatJson').value.trim();
-            const resultDiv = document.getElementById('formatResult');
-            
-            if (!jsonInput) {
-                showAlert('Please enter JSON input', 'error');
-                return;
-            }
-            
-            const obj = parseJson(jsonInput, 'Invalid JSON format');
-            if (!obj) return;
-            
-            try {
-                resultDiv.textContent = JSON.stringify(obj, null, 4);
-                showAlert('JSON formatted successfully!', 'success');
-            } catch (error) {
-                showAlert('Error formatting JSON: ' + error.message, 'error');
-                resultDiv.textContent = "Error: " + error.message;
-            }
-        }
-        
-        function minifyJson() {
-            const jsonInput = document.getElementById('formatJson').value.trim();
-            const resultDiv = document.getElementById('formatResult');
-            
-            if (!jsonInput) {
-                showAlert('Please enter JSON input', 'error');
-                return;
-            }
-            
-            const obj = parseJson(jsonInput, 'Invalid JSON format');
-            if (!obj) return;
-            
-            try {
-                resultDiv.textContent = JSON.stringify(obj);
-                showAlert('JSON minified successfully!', 'success');
-            } catch (error) {
-                showAlert('Error minifying JSON: ' + error.message, 'error');
-                resultDiv.textContent = "Error: " + error.message;
-            }
-        }
-        
-        // JSON Validation
-        function validateJson() {
-            const jsonInput = document.getElementById('validateJson').value.trim();
-            const resultDiv = document.getElementById('validateResult');
-            
-            if (!jsonInput) {
-                showAlert('Please enter JSON input', 'error');
-                return;
-            }
-            
-            try {
-                JSON.parse(jsonInput);
-                resultDiv.textContent = "✅ Valid JSON!";
-                showAlert('JSON is valid!', 'success');
-            } catch (error) {
-                resultDiv.textContent = "❌ Invalid JSON:\n" + error.message;
-                showAlert('Invalid JSON: ' + error.message, 'error');
-            }
-        }
-        
-        // Copy all paths
+        // Copy all paths to clipboard
         function copyAllPaths() {
-            const paths = document.getElementById('pathsResult').textContent;
-            navigator.clipboard.writeText(paths);
+            const pathsResult = document.getElementById('pathsResult');
+            const textArea = document.createElement('textarea');
+            textArea.value = pathsResult.textContent;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
             showAlert('All paths copied to clipboard!', 'success');
         }
         
-        // Show help
+        // Copy converted output to clipboard
+        function copyConverted() {
+            const convertedOutput = document.getElementById('convertedOutput');
+            const textArea = document.createElement('textarea');
+            textArea.value = convertedOutput.textContent;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            showAlert('Converted output copied to clipboard!', 'success');
+        }
+        
+        // Show help information
         function showHelp() {
-            showAlert('Comprehensive JSON Toolkit with Path Generation, Testing, Querying, Visualization and more!', 'info');
+            alert('Advanced Data Toolkit Help\n\n' +
+                  'Path Explorer: Extract and generate paths from your JSON data\n' +
+                  'Data Query: Execute JSONPath queries on your JSON data\n' +
+                  'Converter: Convert between JSON, XML, and HTML formats\n' +
+                  'Visualize: View data structures visually\n\n' +
+                  'Use the input type selector to switch between data formats');
+        }
+        
+        // Visualize data
+        function visualizeData() {
+            const input = document.getElementById('visualizeJson').value.trim();
+            const canvas = document.getElementById('visualizationCanvas');
+            const structureDiv = document.getElementById('structureResult');
+            
+            if (!input) {
+                showAlert('Please enter data to visualize', 'error');
+                return;
+            }
+            
+            try {
+                const data = parseJson(input, 'Invalid JSON format');
+                if (!data) return;
+                
+                // Simple visualization
+                canvas.innerHTML = `
+                    <div style="text-align:center; padding:20px;">
+                        <i class="fas fa-project-diagram" style="font-size:48px; color:#4361ee; margin-bottom:15px;"></i>
+                        <h3 style="color:#333; margin-bottom:15px;">Data Structure Visualization</h3>
+                        <div style="display:flex; justify-content:center; gap:30px; margin-top:20px;">
+                            <div style="position:relative;">
+                                <div style="background:#4361ee; color:white; border-radius:50%; width:80px; height:80px; display:flex; align-items:center; justify-content:center; font-weight:bold; box-shadow:0 5px 15px rgba(0,0,0,0.1);">
+                                    Root
+                                </div>
+                                <div style="position:absolute; bottom:-30px; left:50%; transform:translateX(-50%);">
+                                    <div style="display:flex; gap:20px; margin-top:40px;">
+                                        <div style="position:relative;">
+                                            <div style="background:#4cc9f0; color:white; border-radius:50%; width:60px; height:60px; display:flex; align-items:center; justify-content:center; font-weight:bold; box-shadow:0 5px 15px rgba(0,0,0,0.1);">
+                                                L1
+                                            </div>
+                                            <div style="position:absolute; bottom:-30px; left:50%; transform:translateX(-50%);">
+                                                <div style="display:flex; gap:20px; margin-top:40px;">
+                                                    <div style="background:#f72585; color:white; border-radius:50%; width:50px; height:50px; display:flex; align-items:center; justify-content:center; font-weight:bold; box-shadow:0 5px 15px rgba(0,0,0,0.1);">
+                                                        L2
+                                                    </div>
+                                                    <div style="background:#f72585; color:white; border-radius:50%; width:50px; height:50px; display:flex; align-items:center; justify-content:center; font-weight:bold; box-shadow:0 5px 15px rgba(0,0,0,0.1);">
+                                                        L2
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div style="position:relative;">
+                                            <div style="background:#4cc9f0; color:white; border-radius:50%; width:60px; height:60px; display:flex; align-items:center; justify-content:center; font-weight:bold; box-shadow:0 5px 15px rgba(0,0,0,0.1);">
+                                                L1
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                // Display structure
+                structureDiv.textContent = JSON.stringify(data, null, 2);
+                showAlert('Data visualization generated!', 'success');
+            } catch (error) {
+                showAlert('Error visualizing data: ' + error.message, 'error');
+            }
+        }
+        
+        // Generate tree structure
+        function generateTree() {
+            const input = document.getElementById('visualizeJson').value.trim();
+            const canvas = document.getElementById('visualizationCanvas');
+            
+            if (!input) {
+                showAlert('Please enter data to generate tree', 'error');
+                return;
+            }
+            
+            try {
+                const data = parseJson(input, 'Invalid JSON format');
+                if (!data) return;
+                
+                // Simple tree visualization
+                canvas.innerHTML = `
+                    <div style="text-align:center; padding:20px;">
+                        <h3 style="color:#333; margin-bottom:20px;">Tree Structure</h3>
+                        <div style="display:inline-block; text-align:left; border-left:2px solid #4361ee; padding-left:20px;">
+                            <div style="margin-left:20px;">
+                                <div style="display:flex; align-items:center; margin-bottom:10px;">
+                                    <i class="fas fa-circle" style="color:#4361ee; margin-right:10px;"></i>
+                                    <div style="font-weight:bold;">Root Node</div>
+                                </div>
+                                <div style="margin-left:30px; border-left:2px solid #4cc9f0; padding-left:20px;">
+                                    <div style="display:flex; align-items:center; margin-bottom:10px;">
+                                        <i class="fas fa-circle" style="color:#4cc9f0; margin-right:10px;"></i>
+                                        <div>Child 1</div>
+                                    </div>
+                                    <div style="display:flex; align-items:center; margin-bottom:10px;">
+                                        <i class="fas fa-circle" style="color:#4cc9f0; margin-right:10px;"></i>
+                                        <div>Child 2</div>
+                                    </div>
+                                    <div style="margin-left:30px; border-left:2px solid #f72585; padding-left:20px;">
+                                        <div style="display:flex; align-items:center; margin-bottom:10px;">
+                                            <i class="fas fa-circle" style="color:#f72585; margin-right:10px;"></i>
+                                            <div>Grandchild 1</div>
+                                        </div>
+                                        <div style="display:flex; align-items:center; margin-bottom:10px;">
+                                            <i class="fas fa-circle" style="color:#f72585; margin-right:10px;"></i>
+                                            <div>Grandchild 2</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                showAlert('Tree structure generated!', 'success');
+            } catch (error) {
+                showAlert('Error generating tree: ' + error.message, 'error');
+            }
+        }
+        
+        // XML to JSON conversion
+        function convertXmlToJson(xmlString) {
+            try {
+                if (typeof xmlString !== 'string') return null;
+                
+                // Create a simple XML to JSON converter
+                const parser = new DOMParser();
+                const xmlDoc = parser.parseFromString(xmlString, "text/xml");
+                const result = {};
+                
+                // If XML is empty
+                if (xmlDoc.documentElement.nodeName === "parsererror") {
+                    return { error: "XML parsing error" };
+                }
+                
+                // Convert XML node to JSON object
+                const xmlToJson = (node) => {
+                    const obj = {};
+                    
+                    // Process node attributes
+                    if (node.attributes.length > 0) {
+                        obj["@attributes"] = {};
+                        for (let i = 0; i < node.attributes.length; i++) {
+                            const attr = node.attributes[i];
+                            obj["@attributes"][attr.nodeName] = attr.nodeValue;
+                        }
+                    }
+                    
+                    // Process child nodes
+                    for (let i = 0; i < node.childNodes.length; i++) {
+                        const child = node.childNodes[i];
+                        
+                        if (child.nodeType === Node.TEXT_NODE) {
+                            const text = child.textContent.trim();
+                            if (text) {
+                                obj["#text"] = text;
+                            }
+                        } else if (child.nodeType === Node.ELEMENT_NODE) {
+                            const nodeName = child.nodeName;
+                            
+                            if (typeof obj[nodeName] === "undefined") {
+                                obj[nodeName] = xmlToJson(child);
+                            } else {
+                                if (!Array.isArray(obj[nodeName])) {
+                                    obj[nodeName] = [obj[nodeName]];
+                                }
+                                obj[nodeName].push(xmlToJson(child));
+                            }
+                        }
+                    }
+                    
+                    return obj;
+                };
+                
+                // Start conversion from root element
+                return xmlToJson(xmlDoc.documentElement);
+            } catch (e) {
+                return { error: e.message };
+            }
         }
     </script>
 </body>
