@@ -3,9 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced Data Toolkit</title>
+    <title>Advanced Data Toolkit Pro</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/jsonpath-plus@7.0.0/dist/index-umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/x2js@3.4.1/x2js.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
     <style>
         :root {
             --primary: #4361ee;
@@ -22,6 +25,8 @@
             --html-color: #e44d26;
             --json-color: #f7df1e;
             --path-color: #8f5fe8;
+            --yaml-color: #cb171e;
+            --csv-color: #1d6f42;
         }
         
         * {
@@ -228,6 +233,16 @@
         
         .btn-path {
             background: linear-gradient(135deg, var(--path-color), #6a11cb);
+            color: white;
+        }
+        
+        .btn-yaml {
+            background: linear-gradient(135deg, var(--yaml-color), #8b0000);
+            color: white;
+        }
+        
+        .btn-csv {
+            background: linear-gradient(135deg, var(--csv-color), #2e7d32);
             color: white;
         }
 
@@ -439,6 +454,16 @@
             background: linear-gradient(135deg, var(--path-color), #6a11cb);
             color: white;
         }
+        
+        .path-option-btn.yaml {
+            background: linear-gradient(135deg, var(--yaml-color), #8b0000);
+            color: white;
+        }
+        
+        .path-option-btn.csv {
+            background: linear-gradient(135deg, var(--csv-color), #2e7d32);
+            color: white;
+        }
 
         .path-option-btn:hover:not(.active) {
             background: #e2e8f0;
@@ -470,6 +495,7 @@
             display: flex;
             gap: 15px;
             margin-bottom: 25px;
+            position: relative;
         }
 
         .json-finder input {
@@ -703,6 +729,7 @@
             display: flex;
             gap: 10px;
             margin-bottom: 15px;
+            flex-wrap: wrap;
         }
         
         .type-btn {
@@ -736,6 +763,14 @@
             color: var(--path-color);
         }
         
+        .yaml-output {
+            color: var(--yaml-color);
+        }
+        
+        .csv-output {
+            color: var(--csv-color);
+        }
+        
         .data-type-badge {
             padding: 4px 10px;
             border-radius: 20px;
@@ -762,6 +797,16 @@
         .path-badge {
             background: rgba(143, 95, 232, 0.1);
             color: var(--path-color);
+        }
+        
+        .yaml-badge {
+            background: rgba(203, 23, 30, 0.1);
+            color: var(--yaml-color);
+        }
+        
+        .csv-badge {
+            background: rgba(29, 111, 66, 0.1);
+            color: var(--csv-color);
         }
 
         .path-visualization {
@@ -855,6 +900,167 @@
         .query-result-item:last-child {
             border-bottom: none;
         }
+        
+        .suggestion-box {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 100px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 100;
+            display: none;
+        }
+        
+        .suggestion-item {
+            padding: 10px;
+            cursor: pointer;
+            border-bottom: 1px solid #eee;
+            font-family: monospace;
+        }
+        
+        .suggestion-item:hover {
+            background: #f0f5ff;
+        }
+        
+        .query-builder {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+        
+        .query-builder-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .query-builder select, .query-builder input {
+            padding: 10px 15px;
+            border: 1px solid #ced4da;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        
+        .query-builder .btn {
+            padding: 10px 15px;
+            font-size: 14px;
+        }
+        
+        .tree-view {
+            font-family: 'Fira Code', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            padding: 15px;
+            background: #f8fafc;
+            border-radius: 8px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .tree-node {
+            margin-left: 20px;
+            position: relative;
+        }
+        
+        .tree-node::before {
+            content: "";
+            position: absolute;
+            left: -15px;
+            top: 0;
+            bottom: 0;
+            width: 1px;
+            background: #ced4da;
+        }
+        
+        .tree-node-key {
+            color: #881391;
+            font-weight: 500;
+        }
+        
+        .tree-node-value {
+            color: #1c00cf;
+        }
+        
+        .tree-toggle {
+            cursor: pointer;
+            margin-right: 5px;
+            display: inline-block;
+            width: 12px;
+            text-align: center;
+        }
+        
+        .dynamic-stats {
+            display: flex;
+            gap: 15px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+        
+        .stat-badge {
+            background: #e9ecef;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .stat-badge i {
+            font-size: 18px;
+        }
+        
+        .json-structure {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .structure-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            background: #f1f3f5;
+        }
+        
+        .structure-key {
+            font-weight: 600;
+            color: #4361ee;
+        }
+        
+        .structure-type {
+            font-size: 12px;
+            background: #dee2e6;
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+        
+        .structure-actions {
+            margin-left: auto;
+            display: flex;
+            gap: 5px;
+        }
+        
+        .structure-actions button {
+            background: #e9ecef;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+            font-size: 12px;
+            cursor: pointer;
+        }
 
         @media (max-width: 1200px) {
             .json-section, .query-section {
@@ -880,6 +1086,10 @@
             .tab {
                 justify-content: center;
             }
+            
+            .suggestion-box {
+                right: 0;
+            }
         }
 
         @media (max-width: 768px) {
@@ -904,8 +1114,16 @@
                 font-size: 1.1em;
             }
             
-            .path-stats {
+            .path-stats, .dynamic-stats {
                 flex-direction: column;
+            }
+            
+            .json-finder {
+                flex-direction: column;
+            }
+            
+            .json-finder button {
+                width: 100%;
             }
         }
     </style>
@@ -913,7 +1131,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1><i class="fas fa-rocket"></i> Advanced Data Toolkit</h1>
+            <h1><i class="fas fa-rocket"></i> Advanced Data Toolkit Pro</h1>
             <p>Professional JSON, XML & HTML Processing with Enhanced Query Capabilities</p>
         </div>
 
@@ -1116,6 +1334,28 @@
                     <div class="json-finder">
                         <input type="text" id="queryExpression" class="form-control" placeholder="Enter query expression..." value="$.employees[?(@.active)].name">
                         <button class="btn btn-primary" onclick="executeQuery()"><i class="fas fa-play"></i> Execute</button>
+                        <div id="suggestions" class="suggestion-box"></div>
+                    </div>
+                    
+                    <div class="query-builder">
+                        <h3><i class="fas fa-wand-magic-sparkles"></i> Dynamic Query Builder</h3>
+                        <div class="query-builder-row">
+                            <select id="queryRoot">
+                                <option value="$">Root ($)</option>
+                            </select>
+                            <select id="querySelector">
+                                <option value=".">Property (.)</option>
+                                <option value="..">Recursive (..)</option>
+                                <option value="[*]">All Elements [*]</option>
+                                <option value="[?()]">Filter [?()]</option>
+                            </select>
+                            <input type="text" id="queryProperty" placeholder="Property name">
+                            <button class="btn btn-success" onclick="addToQuery()"><i class="fas fa-plus"></i> Add</button>
+                        </div>
+                        <div class="query-builder-row">
+                            <button class="btn btn-info" onclick="generateDynamicQuery()"><i class="fas fa-gear"></i> Generate Query</button>
+                            <button class="btn btn-secondary" onclick="clearQuery()"><i class="fas fa-broom"></i> Clear</button>
+                        </div>
                     </div>
                     
                     <div class="path-options" style="margin: 25px 0;">
@@ -1297,6 +1537,29 @@
                 </button>
             </div>
             
+            <div class="dynamic-stats">
+                <div class="stat-badge">
+                    <i class="fas fa-layer-group"></i>
+                    <span id="objCount">Objects: 0</span>
+                </div>
+                <div class="stat-badge">
+                    <i class="fas fa-list"></i>
+                    <span id="arrCount">Arrays: 0</span>
+                </div>
+                <div class="stat-badge">
+                    <i class="fas fa-font"></i>
+                    <span id="strCount">Strings: 0</span>
+                </div>
+                <div class="stat-badge">
+                    <i class="fas fa-hashtag"></i>
+                    <span id="numCount">Numbers: 0</span>
+                </div>
+                <div class="stat-badge">
+                    <i class="fas fa-toggle-on"></i>
+                    <span id="boolCount">Booleans: 0</span>
+                </div>
+            </div>
+            
             <div class="visual-canvas" id="visualizationCanvas">
                 <i class="fas fa-project-diagram"></i> Visualization will appear here
             </div>
@@ -1323,6 +1586,7 @@
         let inputType = 'json';
         let queryInputType = 'json';
         let converterInputType = 'json';
+        let queryHistory = [];
         
         // Initialize the app
         window.onload = function() {
@@ -1333,41 +1597,17 @@
                 }
             });
             
-            // Add some example data
-            document.getElementById('visualizeJson').value = JSON.stringify({
-                "organization": {
-                    "name": "TechCorp",
-                    "departments": [
-                        {
-                            "name": "Engineering",
-                            "teams": [
-                                {
-                                    "name": "Frontend",
-                                    "members": 8,
-                                    "skills": ["JavaScript", "React", "CSS"]
-                                },
-                                {
-                                    "name": "Backend",
-                                    "members": 10,
-                                    "skills": ["Java", "Python", "SQL"]
-                                }
-                            ]
-                        },
-                        {
-                            "name": "Design",
-                            "teams": [
-                                {
-                                    "name": "UI/UX",
-                                    "members": 6,
-                                    "skills": ["Figma", "Sketch", "Adobe XD"]
-                                }
-                            ]
-                        }
-                    ],
-                    "employees": 24,
-                    "locations": ["New York", "San Francisco", "Berlin"]
-                }
-            }, null, 2);
+            // Load query history from localStorage
+            const savedHistory = localStorage.getItem('queryHistory');
+            if (savedHistory) {
+                queryHistory = JSON.parse(savedHistory);
+            }
+            
+            // Set up query input suggestions
+            setupQuerySuggestions();
+            
+            // Set up dynamic query builder
+            setupQueryBuilder();
         };
         
         // Input type switching
@@ -1397,6 +1637,9 @@
                                type === 'xml' ? 'Paste your XML here...' : 
                                'Paste your HTML here...';
             document.getElementById('queryJson').placeholder = placeholder;
+            
+            // Update query builder
+            setupQueryBuilder();
         }
         
         function setConverterInputType(type) {
@@ -1424,6 +1667,19 @@
             });
             document.getElementById(tabName).classList.add('active');
             event.target.classList.add('active');
+            
+            // Update stats when switching to visualize tab
+            if (tabName === 'visualize') {
+                try {
+                    const input = document.getElementById('visualizeJson').value.trim();
+                    if (input) {
+                        const data = JSON.parse(input);
+                        updateDataStats(data);
+                    }
+                } catch (e) {
+                    // Ignore errors
+                }
+            }
         }
         
         // Path type setting
@@ -1692,7 +1948,133 @@
             }
         }
         
-        // Execute JSONPath query
+        // Setup query suggestions
+        function setupQuerySuggestions() {
+            const queryInput = document.getElementById('queryExpression');
+            const suggestionsDiv = document.getElementById('suggestions');
+            
+            queryInput.addEventListener('input', function() {
+                const value = this.value.trim();
+                suggestionsDiv.innerHTML = '';
+                suggestionsDiv.style.display = 'none';
+                
+                if (value.length > 0) {
+                    // Add history items
+                    queryHistory.filter(item => item.includes(value)).slice(0, 5).forEach(item => {
+                        const suggestion = document.createElement('div');
+                        suggestion.className = 'suggestion-item';
+                        suggestion.textContent = item;
+                        suggestion.onclick = () => {
+                            queryInput.value = item;
+                            suggestionsDiv.style.display = 'none';
+                        };
+                        suggestionsDiv.appendChild(suggestion);
+                    });
+                    
+                    // Add dynamic suggestions
+                    if (suggestionsDiv.children.length > 0) {
+                        suggestionsDiv.style.display = 'block';
+                    }
+                }
+            });
+            
+            queryInput.addEventListener('blur', function() {
+                setTimeout(() => {
+                    suggestionsDiv.style.display = 'none';
+                }, 200);
+            });
+        }
+        
+        // Setup query builder
+        function setupQueryBuilder() {
+            const queryRoot = document.getElementById('queryRoot');
+            queryRoot.innerHTML = '<option value="$">Root ($)</option>';
+            
+            try {
+                const input = document.getElementById('queryJson').value.trim();
+                if (!input) return;
+                
+                let data;
+                if (queryInputType === 'json') {
+                    data = JSON.parse(input);
+                } else {
+                    data = convertXmlToJson(input);
+                }
+                
+                if (!data) return;
+                
+                // Add top-level properties to query root
+                if (typeof data === 'object' && data !== null) {
+                    Object.keys(data).forEach(key => {
+                        const option = document.createElement('option');
+                        option.value = `$.${key}`;
+                        option.textContent = `$.${key}`;
+                        queryRoot.appendChild(option);
+                    });
+                }
+            } catch (e) {
+                // Ignore errors
+            }
+        }
+        
+        // Add to query builder
+        function addToQuery() {
+            const querySelector = document.getElementById('querySelector').value;
+            const queryProperty = document.getElementById('queryProperty').value.trim();
+            const currentQuery = document.getElementById('queryExpression').value;
+            
+            let newPart = '';
+            
+            if (querySelector === '.' || querySelector === '..') {
+                if (queryProperty) {
+                    newPart = `${querySelector}${queryProperty}`;
+                }
+            } else if (querySelector === '[*]') {
+                newPart = '[*]';
+            } else if (querySelector === '[?()]') {
+                if (queryProperty) {
+                    newPart = `[?(@.${queryProperty})]`;
+                } else {
+                    newPart = `[?()]`;
+                }
+            }
+            
+            if (newPart) {
+                document.getElementById('queryExpression').value = currentQuery + newPart;
+            }
+        }
+        
+        // Generate dynamic query
+        function generateDynamicQuery() {
+            const queryRoot = document.getElementById('queryRoot').value;
+            const querySelector = document.getElementById('querySelector').value;
+            const queryProperty = document.getElementById('queryProperty').value.trim();
+            
+            let query = queryRoot;
+            
+            if (querySelector === '.' || querySelector === '..') {
+                if (queryProperty) {
+                    query += `${querySelector}${queryProperty}`;
+                }
+            } else if (querySelector === '[*]') {
+                query += '[*]';
+            } else if (querySelector === '[?()]') {
+                if (queryProperty) {
+                    query += `[?(@.${queryProperty})]`;
+                } else {
+                    query += `[?()]`;
+                }
+            }
+            
+            document.getElementById('queryExpression').value = query;
+        }
+        
+        // Clear query
+        function clearQuery() {
+            document.getElementById('queryExpression').value = '';
+        }
+        
+        // Execute JSONPath query with enhanced handling
         function executeQuery() {
             const input = document.getElementById('queryJson').value.trim();
             const query = document.getElementById('queryExpression').value.trim();
@@ -1719,6 +2101,15 @@
             if (!jsonData) return;
             
             try {
+                // Save to history
+                if (!queryHistory.includes(query)) {
+                    queryHistory.unshift(query);
+                    if (queryHistory.length > 10) {
+                        queryHistory.pop();
+                    }
+                    localStorage.setItem('queryHistory', JSON.stringify(queryHistory));
+                }
+                
                 // Execute JSONPath query
                 const results = JSONPath({ path: query, json: jsonData });
                 
@@ -1730,9 +2121,14 @@
                     formattedResults = results.map((result, index) => {
                         let content = '';
                         if (typeof result === 'object' && result !== null) {
-                            content = `<div class="query-result-item"><strong>${index + 1}:</strong> ${JSON.stringify(result, null, 2)}</div>`;
+                            content = `<div class="query-result-item">
+                                <strong>${index + 1}:</strong> 
+                                <pre>${JSON.stringify(result, null, 2)}</pre>
+                            </div>`;
                         } else {
-                            content = `<div class="query-result-item"><strong>${index + 1}:</strong> ${result}</div>`;
+                            content = `<div class="query-result-item">
+                                <strong>${index + 1}:</strong> ${result}
+                            </div>`;
                         }
                         return content;
                     }).join('');
@@ -1793,28 +2189,37 @@
                         } else if (outputFormat === 'html') {
                             result = jsonToHtml(jsonData);
                         } else if (outputFormat === 'yaml') {
-                            result = jsonToYaml(jsonData);
+                            result = jsyaml.dump(jsonData);
                         } else if (outputFormat === 'csv') {
                             result = jsonToCsv(jsonData);
                         } else {
                             result = JSON.stringify(jsonData, null, 2);
                         }
                     } else if (converterInputType === 'xml') {
-                        const jsonData = convertXmlToJson(input);
-                        
                         if (outputFormat === 'json') {
-                            result = JSON.stringify(jsonData, null, 2);
+                            result = JSON.stringify(convertXmlToJson(input), null, 2);
                         } else if (outputFormat === 'html') {
                             result = xmlToHtml(input);
+                        } else if (outputFormat === 'yaml') {
+                            const json = convertXmlToJson(input);
+                            result = jsyaml.dump(json);
+                        } else if (outputFormat === 'csv') {
+                            const json = convertXmlToJson(input);
+                            result = jsonToCsv(json);
                         } else {
                             result = input; // Keep as XML
                         }
                     } else { // HTML
                         if (outputFormat === 'json') {
-                            const jsonData = convertHtmlToJson(input);
-                            result = JSON.stringify(jsonData, null, 2);
+                            result = JSON.stringify(convertHtmlToJson(input), null, 2);
                         } else if (outputFormat === 'xml') {
                             result = htmlToXml(input);
+                        } else if (outputFormat === 'yaml') {
+                            const json = convertHtmlToJson(input);
+                            result = jsyaml.dump(json);
+                        } else if (outputFormat === 'csv') {
+                            const json = convertHtmlToJson(input);
+                            result = jsonToCsv(json);
                         } else {
                             result = input; // Keep as HTML
                         }
@@ -1894,155 +2299,32 @@
             return html + '</div>';
         }
         
-        // Copy all paths to clipboard
-        function copyAllPaths() {
-            const pathsResult = document.getElementById('pathsResult');
-            const textArea = document.createElement('textarea');
-            textArea.value = pathsResult.textContent;
-            document.body.appendChild(textArea);
-            textArea.select();
-            document.execCommand('copy');
-            document.body.removeChild(textArea);
-            showAlert('All paths copied to clipboard!', 'success');
-        }
-        
-        // Copy converted output to clipboard
-        function copyConverted() {
-            const convertedOutput = document.getElementById('convertedOutput');
-            const textArea = document.createElement('textarea');
-            textArea.value = convertedOutput.textContent;
-            document.body.appendChild(textArea);
-            textArea.select();
-            document.execCommand('copy');
-            document.body.removeChild(textArea);
-            showAlert('Converted output copied to clipboard!', 'success');
-        }
-        
-        // Show help information
-        function showHelp() {
-            alert('Advanced Data Toolkit Help\n\n' +
-                  'Path Explorer: Extract and generate paths from your JSON data\n' +
-                  'Data Query: Execute JSONPath queries on your JSON data\n' +
-                  'Converter: Convert between JSON, XML, and HTML formats\n' +
-                  'Visualize: View data structures visually\n\n' +
-                  'Use the input type selector to switch between data formats');
-        }
-        
-        // Visualize data
-        function visualizeData() {
-            const input = document.getElementById('visualizeJson').value.trim();
-            const canvas = document.getElementById('visualizationCanvas');
-            const structureDiv = document.getElementById('structureResult');
-            
-            if (!input) {
-                showAlert('Please enter data to visualize', 'error');
-                return;
+        // JSON to CSV conversion
+        function jsonToCsv(json) {
+            if (Array.isArray(json) && json.length > 0) {
+                const headers = Object.keys(json[0]);
+                const rows = json.map(obj => 
+                    headers.map(header => {
+                        let value = obj[header];
+                        if (typeof value === 'object') {
+                            return JSON.stringify(value);
+                        }
+                        return value;
+                    }).join(',')
+                );
+                return [headers.join(','), ...rows].join('\n');
+            } else if (typeof json === 'object') {
+                const headers = Object.keys(json);
+                const values = headers.map(header => {
+                    let value = json[header];
+                    if (typeof value === 'object') {
+                        return JSON.stringify(value);
+                    }
+                    return value;
+                });
+                return [headers.join(','), values.join(',')].join('\n');
             }
-            
-            try {
-                const data = parseJson(input, 'Invalid JSON format');
-                if (!data) return;
-                
-                // Simple visualization
-                canvas.innerHTML = `
-                    <div style="text-align:center; padding:20px;">
-                        <i class="fas fa-project-diagram" style="font-size:48px; color:#4361ee; margin-bottom:15px;"></i>
-                        <h3 style="color:#333; margin-bottom:15px;">Data Structure Visualization</h3>
-                        <div style="display:flex; justify-content:center; gap:30px; margin-top:20px;">
-                            <div style="position:relative;">
-                                <div style="background:#4361ee; color:white; border-radius:50%; width:80px; height:80px; display:flex; align-items:center; justify-content:center; font-weight:bold; box-shadow:0 5px 15px rgba(0,0,0,0.1);">
-                                    Root
-                                </div>
-                                <div style="position:absolute; bottom:-30px; left:50%; transform:translateX(-50%);">
-                                    <div style="display:flex; gap:20px; margin-top:40px;">
-                                        <div style="position:relative;">
-                                            <div style="background:#4cc9f0; color:white; border-radius:50%; width:60px; height:60px; display:flex; align-items:center; justify-content:center; font-weight:bold; box-shadow:0 5px 15px rgba(0,0,0,0.1);">
-                                                L1
-                                            </div>
-                                            <div style="position:absolute; bottom:-30px; left:50%; transform:translateX(-50%);">
-                                                <div style="display:flex; gap:20px; margin-top:40px;">
-                                                    <div style="background:#f72585; color:white; border-radius:50%; width:50px; height:50px; display:flex; align-items:center; justify-content:center; font-weight:bold; box-shadow:0 5px 15px rgba(0,0,0,0.1);">
-                                                        L2
-                                                    </div>
-                                                    <div style="background:#f72585; color:white; border-radius:50%; width:50px; height:50px; display:flex; align-items:center; justify-content:center; font-weight:bold; box-shadow:0 5px 15px rgba(0,0,0,0.1);">
-                                                        L2
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div style="position:relative;">
-                                            <div style="background:#4cc9f0; color:white; border-radius:50%; width:60px; height:60px; display:flex; align-items:center; justify-content:center; font-weight:bold; box-shadow:0 5px 15px rgba(0,0,0,0.1);">
-                                                L1
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-                
-                // Display structure
-                structureDiv.textContent = JSON.stringify(data, null, 2);
-                showAlert('Data visualization generated!', 'success');
-            } catch (error) {
-                showAlert('Error visualizing data: ' + error.message, 'error');
-            }
-        }
-        
-        // Generate tree structure
-        function generateTree() {
-            const input = document.getElementById('visualizeJson').value.trim();
-            const canvas = document.getElementById('visualizationCanvas');
-            
-            if (!input) {
-                showAlert('Please enter data to generate tree', 'error');
-                return;
-            }
-            
-            try {
-                const data = parseJson(input, 'Invalid JSON format');
-                if (!data) return;
-                
-                // Simple tree visualization
-                canvas.innerHTML = `
-                    <div style="text-align:center; padding:20px;">
-                        <h3 style="color:#333; margin-bottom:20px;">Tree Structure</h3>
-                        <div style="display:inline-block; text-align:left; border-left:2px solid #4361ee; padding-left:20px;">
-                            <div style="margin-left:20px;">
-                                <div style="display:flex; align-items:center; margin-bottom:10px;">
-                                    <i class="fas fa-circle" style="color:#4361ee; margin-right:10px;"></i>
-                                    <div style="font-weight:bold;">Root Node</div>
-                                </div>
-                                <div style="margin-left:30px; border-left:2px solid #4cc9f0; padding-left:20px;">
-                                    <div style="display:flex; align-items:center; margin-bottom:10px;">
-                                        <i class="fas fa-circle" style="color:#4cc9f0; margin-right:10px;"></i>
-                                        <div>Child 1</div>
-                                    </div>
-                                    <div style="display:flex; align-items:center; margin-bottom:10px;">
-                                        <i class="fas fa-circle" style="color:#4cc9f0; margin-right:10px;"></i>
-                                        <div>Child 2</div>
-                                    </div>
-                                    <div style="margin-left:30px; border-left:2px solid #f72585; padding-left:20px;">
-                                        <div style="display:flex; align-items:center; margin-bottom:10px;">
-                                            <i class="fas fa-circle" style="color:#f72585; margin-right:10px;"></i>
-                                            <div>Grandchild 1</div>
-                                        </div>
-                                        <div style="display:flex; align-items:center; margin-bottom:10px;">
-                                            <i class="fas fa-circle" style="color:#f72585; margin-right:10px;"></i>
-                                            <div>Grandchild 2</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-                
-                showAlert('Tree structure generated!', 'success');
-            } catch (error) {
-                showAlert('Error generating tree: ' + error.message, 'error');
-            }
+            return '';
         }
         
         // XML to JSON conversion
@@ -2104,6 +2386,299 @@
             } catch (e) {
                 return { error: e.message };
             }
+        }
+        
+        // HTML to JSON conversion
+        function convertHtmlToJson(htmlString) {
+            try {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(htmlString, "text/html");
+                
+                const convertElement = (element) => {
+                    const obj = {
+                        tag: element.tagName.toLowerCase(),
+                        attributes: {},
+                        children: []
+                    };
+                    
+                    // Attributes
+                    for (let i = 0; i < element.attributes.length; i++) {
+                        const attr = element.attributes[i];
+                        obj.attributes[attr.name] = attr.value;
+                    }
+                    
+                    // Children
+                    for (let i = 0; i < element.childNodes.length; i++) {
+                        const node = element.childNodes[i];
+                        if (node.nodeType === Node.ELEMENT_NODE) {
+                            obj.children.push(convertElement(node));
+                        } else if (node.nodeType === Node.TEXT_NODE && node.textContent.trim()) {
+                            obj.children.push({ text: node.textContent.trim() });
+                        }
+                    }
+                    
+                    return obj;
+                };
+                
+                return convertElement(doc.body);
+            } catch (e) {
+                return { error: e.message };
+            }
+        }
+        
+        // XML to HTML conversion
+        function xmlToHtml(xmlString) {
+            try {
+                const parser = new DOMParser();
+                const xmlDoc = parser.parseFromString(xmlString, "text/xml");
+                return xmlDoc.documentElement.outerHTML;
+            } catch (e) {
+                return xmlString;
+            }
+        }
+        
+        // HTML to XML conversion
+        function htmlToXml(htmlString) {
+            try {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(htmlString, "text/html");
+                return doc.documentElement.outerHTML;
+            } catch (e) {
+                return htmlString;
+            }
+        }
+        
+        // Copy all paths to clipboard
+        function copyAllPaths() {
+            const pathsResult = document.getElementById('pathsResult');
+            const textArea = document.createElement('textarea');
+            textArea.value = pathsResult.textContent;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            showAlert('All paths copied to clipboard!', 'success');
+        }
+        
+        // Copy converted output to clipboard
+        function copyConverted() {
+            const convertedOutput = document.getElementById('convertedOutput');
+            const textArea = document.createElement('textarea');
+            textArea.value = convertedOutput.textContent;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            showAlert('Converted output copied to clipboard!', 'success');
+        }
+        
+        // Show help information
+        function showHelp() {
+            alert('Advanced Data Toolkit Pro Help\n\n' +
+                  'Path Explorer: Extract and generate paths from your data\n' +
+                  'Data Query: Execute JSONPath queries with dynamic query builder\n' +
+                  'Converter: Convert between JSON, XML, HTML, YAML, and CSV\n' +
+                  'Visualize: View data structures visually with detailed statistics\n\n' +
+                  'Use the input type selector to switch between data formats');
+        }
+        
+        // Visualize data
+        function visualizeData() {
+            const input = document.getElementById('visualizeJson').value.trim();
+            const canvas = document.getElementById('visualizationCanvas');
+            const structureDiv = document.getElementById('structureResult');
+            
+            if (!input) {
+                showAlert('Please enter data to visualize', 'error');
+                return;
+            }
+            
+            try {
+                const data = parseJson(input, 'Invalid JSON format');
+                if (!data) return;
+                
+                // Update stats
+                updateDataStats(data);
+                
+                // Simple visualization
+                canvas.innerHTML = `
+                    <div style="text-align:center; padding:20px;">
+                        <i class="fas fa-project-diagram" style="font-size:48px; color:#4361ee; margin-bottom:15px;"></i>
+                        <h3 style="color:#333; margin-bottom:15px;">Data Structure Visualization</h3>
+                        <div style="display:flex; justify-content:center; gap:30px; margin-top:20px;">
+                            <div style="position:relative;">
+                                <div style="background:#4361ee; color:white; border-radius:50%; width:80px; height:80px; display:flex; align-items:center; justify-content:center; font-weight:bold; box-shadow:0 5px 15px rgba(0,0,0,0.1);">
+                                    Root
+                                </div>
+                                <div style="position:absolute; bottom:-30px; left:50%; transform:translateX(-50%);">
+                                    <div style="display:flex; gap:20px; margin-top:40px;">
+                                        <div style="position:relative;">
+                                            <div style="background:#4cc9f0; color:white; border-radius:50%; width:60px; height:60px; display:flex; align-items:center; justify-content:center; font-weight:bold; box-shadow:0 5px 15px rgba(0,0,0,0.1);">
+                                                L1
+                                            </div>
+                                            <div style="position:absolute; bottom:-30px; left:50%; transform:translateX(-50%);">
+                                                <div style="display:flex; gap:20px; margin-top:40px;">
+                                                    <div style="background:#f72585; color:white; border-radius:50%; width:50px; height:50px; display:flex; align-items:center; justify-content:center; font-weight:bold; box-shadow:0 5px 15px rgba(0,0,0,0.1);">
+                                                        L2
+                                                    </div>
+                                                    <div style="background:#f72585; color:white; border-radius:50%; width:50px; height:50px; display:flex; align-items:center; justify-content:center; font-weight:bold; box-shadow:0 5px 15px rgba(0,0,0,0.1);">
+                                                        L2
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div style="position:relative;">
+                                            <div style="background:#4cc9f0; color:white; border-radius:50%; width:60px; height:60px; display:flex; align-items:center; justify-content:center; font-weight:bold; box-shadow:0 5px 15px rgba(0,0,0,0.1);">
+                                                L1
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                // Display structure as tree
+                structureDiv.innerHTML = `
+                    <div class="tree-view">
+                        ${createTreeView(data)}
+                    </div>
+                `;
+                
+                showAlert('Data visualization generated!', 'success');
+            } catch (error) {
+                showAlert('Error visualizing data: ' + error.message, 'error');
+            }
+        }
+        
+        // Create tree view for JSON data
+        function createTreeView(data, depth = 0) {
+            if (typeof data !== 'object' || data === null) {
+                return `<div class="tree-node-value">${data}</div>`;
+            }
+            
+            let html = '<div class="tree-node">';
+            
+            if (Array.isArray(data)) {
+                html += '<div class="tree-node-key">[Array]</div>';
+                data.forEach((item, index) => {
+                    html += `<div class="tree-node">
+                        <span class="tree-node-key">${index}:</span>
+                        ${createTreeView(item, depth + 1)}
+                    </div>`;
+                });
+            } else {
+                for (const key in data) {
+                    if (data.hasOwnProperty(key)) {
+                        html += `<div class="tree-node">
+                            <span class="tree-node-key">${key}:</span>
+                            ${createTreeView(data[key], depth + 1)}
+                        </div>`;
+                    }
+                }
+            }
+            
+            return html + '</div>';
+        }
+        
+        // Generate tree structure
+        function generateTree() {
+            const input = document.getElementById('visualizeJson').value.trim();
+            const canvas = document.getElementById('visualizationCanvas');
+            
+            if (!input) {
+                showAlert('Please enter data to generate tree', 'error');
+                return;
+            }
+            
+            try {
+                const data = parseJson(input, 'Invalid JSON format');
+                if (!data) return;
+                
+                // Update stats
+                updateDataStats(data);
+                
+                // Simple tree visualization
+                canvas.innerHTML = `
+                    <div style="text-align:center; padding:20px;">
+                        <h3 style="color:#333; margin-bottom:20px;">Tree Structure</h3>
+                        <div style="display:inline-block; text-align:left; border-left:2px solid #4361ee; padding-left:20px;">
+                            <div style="margin-left:20px;">
+                                <div style="display:flex; align-items:center; margin-bottom:10px;">
+                                    <i class="fas fa-circle" style="color:#4361ee; margin-right:10px;"></i>
+                                    <div style="font-weight:bold;">Root Node</div>
+                                </div>
+                                <div style="margin-left:30px; border-left:2px solid #4cc9f0; padding-left:20px;">
+                                    <div style="display:flex; align-items:center; margin-bottom:10px;">
+                                        <i class="fas fa-circle" style="color:#4cc9f0; margin-right:10px;"></i>
+                                        <div>Child 1</div>
+                                    </div>
+                                    <div style="display:flex; align-items:center; margin-bottom:10px;">
+                                        <i class="fas fa-circle" style="color:#4cc9f0; margin-right:10px;"></i>
+                                        <div>Child 2</div>
+                                    </div>
+                                    <div style="margin-left:30px; border-left:2px solid #f72585; padding-left:20px;">
+                                        <div style="display:flex; align-items:center; margin-bottom:10px;">
+                                            <i class="fas fa-circle" style="color:#f72585; margin-right:10px;"></i>
+                                            <div>Grandchild 1</div>
+                                        </div>
+                                        <div style="display:flex; align-items:center; margin-bottom:10px;">
+                                            <i class="fas fa-circle" style="color:#f72585; margin-right:10px;"></i>
+                                            <div>Grandchild 2</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                showAlert('Tree structure generated!', 'success');
+            } catch (error) {
+                showAlert('Error generating tree: ' + error.message, 'error');
+            }
+        }
+        
+        // Update data statistics
+        function updateDataStats(data) {
+            const stats = {
+                objects: 0,
+                arrays: 0,
+                strings: 0,
+                numbers: 0,
+                booleans: 0,
+                nulls: 0
+            };
+            
+            const countTypes = (obj) => {
+                if (typeof obj === 'object' && obj !== null) {
+                    if (Array.isArray(obj)) {
+                        stats.arrays++;
+                    } else {
+                        stats.objects++;
+                    }
+                    for (const key in obj) {
+                        countTypes(obj[key]);
+                    }
+                } else if (typeof obj === 'string') {
+                    stats.strings++;
+                } else if (typeof obj === 'number') {
+                    stats.numbers++;
+                } else if (typeof obj === 'boolean') {
+                    stats.booleans++;
+                } else if (obj === null) {
+                    stats.nulls++;
+                }
+            };
+            
+            countTypes(data);
+            
+            document.getElementById('objCount').textContent = `Objects: ${stats.objects}`;
+            document.getElementById('arrCount').textContent = `Arrays: ${stats.arrays}`;
+            document.getElementById('strCount').textContent = `Strings: ${stats.strings}`;
+            document.getElementById('numCount').textContent = `Numbers: ${stats.numbers}`;
+            document.getElementById('boolCount').textContent = `Booleans: ${stats.booleans}`;
         }
     </script>
 </body>
